@@ -23,6 +23,7 @@ SECRET_KEY = '2fq*f8_j^7)wujhw3br@%4p0=p4duri&q*%j*@0m7mi2-_i-av'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+is_heroku = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -79,29 +80,30 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 # # for heroku database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-#
-# import dj_database_url
-#
-# prod_db = dj_database_url.config()
-# DATABASES['default'].update(prod_db)
-
-# for local database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'my_store',
-        'USER': 'fcs_admin',
-        'PASSWORD': 'wwzzaahh',
-        'HOST': 'localhost',
-        'PORT': '',
+if is_heroku:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+
+    import dj_database_url
+
+    prod_db = dj_database_url.config()
+    DATABASES['default'].update(prod_db)
+else:
+    # for local database
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'my_store',
+            'USER': 'fcs_admin',
+            'PASSWORD': 'wwzzaahh',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
