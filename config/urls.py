@@ -17,6 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 from .views import index
 
+admin.site.site_header = 'My Store'
+admin.site.site_title = 'My Store'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('checkserver/', index, name='index'),
