@@ -89,9 +89,9 @@ if IS_HEROKU:
     }
 
     import dj_database_url
-
     prod_db = dj_database_url.config()
     DATABASES['default'].update(prod_db)
+
 else:
     # for local database
     DATABASES = {

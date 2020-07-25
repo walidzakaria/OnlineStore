@@ -51,12 +51,12 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
 
     list_display = ('id', 'name', 'brand', 'sub_category', 'price1',
-                    'price2', 'updated_by', 'updated_at',)
+                    'price2', 'updated_by', 'updated_at', 'image1',)
     # prepopulated_fields = {'slug': ['title']}
     readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at',)
     fieldsets = ((
                      None, {
-                         'fields': ('name', 'brand', 'sub_category', 'price1', 'price2', 'description',)
+                         'fields': ('name', 'brand', 'sub_category', 'price1', 'price2', 'description', 'image1',)
                      }), (
                      'Other Information', {
                          'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
