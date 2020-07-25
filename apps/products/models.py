@@ -40,11 +40,11 @@ class Product(AbstractTableMeta, models.Model):
     price1 = models.DecimalField(max_digits=14, decimal_places=2)
     price2 = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     description = models.TextField(max_length=500, blank=True, null=True)
-    image1 = models.ImageField(upload_to='products/', null=True)
-    image2 = models.ImageField(upload_to='products/', null=True)
-    image3 = models.ImageField(upload_to='products/', null=True)
-    image4 = models.ImageField(upload_to='products/', null=True)
-    image5 = models.ImageField(upload_to='products/', null=True)
+    image1 = models.ImageField(upload_to='products/', null=True, blank=True)
+    image2 = models.ImageField(upload_to='products/', null=True, blank=True)
+    image3 = models.ImageField(upload_to='products/', null=True, blank=True)
+    image4 = models.ImageField(upload_to='products/', null=True, blank=True)
+    image5 = models.ImageField(upload_to='products/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} ({self.brand.name})"
