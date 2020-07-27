@@ -34,6 +34,7 @@ class UserAddressAdmin(admin.ModelAdmin):
 
 
 class OrderAdmin(admin.ModelAdmin):
+    form = OrderForm
     list_display = ('id', 'client', 'status', 'user_address', 'notes', 'number_of_items', 'due_amount',)
     readonly_fields = ('number_of_items', 'due_amount', 'created_by', 'created_at', 'updated_by', 'updated_at',)
     fieldsets = (

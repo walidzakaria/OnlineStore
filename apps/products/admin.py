@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Brand, Category, SubCategory, Product
+from .models import Brand, Category, SubCategory, Product, Review
 from apps.authapp.models import User
-from .forms import ProductForm
+from .forms import ProductForm, ReviewForm
 
 
 # Register your models here.
@@ -42,16 +42,16 @@ class ProductAdmin(admin.ModelAdmin):
                        'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
                        'preview_image1', 'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',)
     fieldsets = ((
-                     None, {
-                         'fields': ('name', 'brand', 'sub_category', 'price1', 'price2', 'description',
-                                    'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
-                                    'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5', 'active',)
-                     }), (
-                     'Other Information', {
-                         'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
-                                    'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',),
-                         'classes': ('collapse',)
-                     })
+         None, {
+             'fields': ('name', 'brand', 'sub_category', 'price1', 'price2', 'description',
+                        'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
+                        'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5', 'active',)
+         }), (
+         'Other Information', {
+             'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
+                        'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',),
+             'classes': ('collapse',)
+         })
     )
     list_filter = ('sub_category__name', 'sub_category__category__name', 'brand__name', 'active',)
     search_fields = ('sub_category__name', 'sub_category__category__name', 'brand__name',)
@@ -110,9 +110,32 @@ class ProductAdmin(admin.ModelAdmin):
         obj.save()
 
 
-# TODO: Register reviews here
+class ReviewAdmin(admin.ModelAdmin):
+    form = ReviewForm
+    list_display = ('product', 'rating', 'comment', 'updated_by', 'updated_at')
+    readonly_fields = ('updated_by', 'updated_at', 'created_by', 'created_at',)
+    list_filter = ('product', 'rating',)
+    search_fields = ('product', )
+    fieldsets = ((
+         None, {
+             'fields': ('product', 'rating', 'comment',)
+         }), (
+         'Other Information', {
+             'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
+             'classes': ('collapse',)
+         })
+    )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        obj.save()
+
+
 
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Review, ReviewAdmin)
