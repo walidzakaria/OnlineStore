@@ -104,9 +104,6 @@ class ProductAdmin(admin.ModelAdmin):
     get_brand.short_description = 'Brand'
 
     def save_model(self, request, obj, form, change):
-        print('change: ', change)
-        print('ojb: ', obj)
-        print('self: ', self)
         if not change:
             obj.created_by = request.user
         obj.updated_by = request.user

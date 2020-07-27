@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Sum
+
 from apps.utils.models import AbstractTableMeta
 from apps.authapp.models import User
 from apps.products.models import Product
@@ -10,9 +12,17 @@ class Purchase(AbstractTableMeta, models.Model):
     date = models.DateField()
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.PositiveIntegerField()
+    net_price = models.DecimalField(max_digits=14, decimal_places=2)
+
+    @property
+    def product_value(self):
+        return self.quantity * self.net_price
 
     def __str__(self):
-        return f'{self.id}: {self.product}: {self.quantity}'
+        return f'{self.id}: {self.product}: {self.quantity}, {self.product_value}'
+
+    class Meta:
+        ordering: ['-id']
 
 
 class UserAddress(models.Model):
@@ -21,6 +31,10 @@ class UserAddress(models.Model):
 
     def __str__(self):
         return f'{self.user}: {self.address}'
+
+    class Meta:
+        verbose_name = 'User Address'
+        verbose_name_plural = 'User Addresses'
 
 
 class Order(AbstractTableMeta, models.Model):
@@ -40,7 +54,7 @@ class Order(AbstractTableMeta, models.Model):
 
     @property
     def number_of_items(self):
-        result = OrderItems.objects.filter(order=self).count()
+        result = OrderItems.objects.filter(order=self).aggregate(Sum('quantity'))['quantity__sum']
         return result
 
     @property
@@ -66,3 +80,7 @@ class OrderItems(models.Model):
 
     def __str__(self):
         return f'{self.order}, {self.product}, {self.quantity}, {self.product_value}'
+
+    class Meta:
+        verbose_name = 'Order Items'
+        verbose_name_plural = 'Order Items'
