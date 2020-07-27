@@ -23,7 +23,7 @@ SECRET_KEY = '2fq*f8_j^7)wujhw3br@%4p0=p4duri&q*%j*@0m7mi2-_i-av'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-IS_HEROKU = True
+IS_HEROKU = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'apps.authapp',
     'apps.utils',
     'apps.products',
+    'apps.orders',
 ]
 
 MIDDLEWARE = [

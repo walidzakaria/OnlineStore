@@ -35,22 +35,25 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
 
     list_display = ('id', 'name', 'brand', 'sub_category', 'price1',
-                    'price2', 'updated_by', 'updated_at',)
+                    'price2', 'updated_by', 'updated_at',
+                    'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average', 'active')
     # prepopulated_fields = {'slug': ['title']}
-    readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at', 'preview_image1',
-                       'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',)
+    readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at',
+                       'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
+                       'preview_image1', 'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',)
     fieldsets = ((
                      None, {
                          'fields': ('name', 'brand', 'sub_category', 'price1', 'price2', 'description',
                                     'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
-                                    'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',)
+                                    'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5', 'active',)
                      }), (
                      'Other Information', {
-                         'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
+                         'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
+                                    'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',),
                          'classes': ('collapse',)
                      })
     )
-    list_filter = ('sub_category__name', 'sub_category__category__name', 'brand__name',)
+    list_filter = ('sub_category__name', 'sub_category__category__name', 'brand__name', 'active',)
     search_fields = ('sub_category__name', 'sub_category__category__name', 'brand__name',)
 
     # to refer to sub category
@@ -109,6 +112,8 @@ class ProductAdmin(admin.ModelAdmin):
         obj.updated_by = request.user
         obj.save()
 
+
+# TODO: Register reviews here
 
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Category, CategoryAdmin)
