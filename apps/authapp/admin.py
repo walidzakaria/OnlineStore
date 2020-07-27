@@ -10,3 +10,5 @@ class AdminUser(admin.ModelAdmin):
 
 
 admin.site.register(User, AdminUser)
+
+# TODO: Fix hashing the password

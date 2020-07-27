@@ -41,7 +41,7 @@ class Product(AbstractTableMeta, models.Model):
     sub_category = models.ForeignKey(SubCategory, on_delete=models.DO_NOTHING)
     price1 = models.DecimalField(max_digits=14, decimal_places=2)
     price2 = models.DecimalField(max_digits=14, decimal_places=2, default=0)
-    description = models.TextField(max_length=500, blank=True, null=True)
+    description = models.TextField(max_length=1000, blank=True, null=True)
     image1 = models.ImageField(upload_to='products/', null=True, blank=True)
     image2 = models.ImageField(upload_to='products/', null=True, blank=True)
     image3 = models.ImageField(upload_to='products/', null=True, blank=True)

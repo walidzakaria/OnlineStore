@@ -24,6 +24,7 @@ class UserAddress(models.Model):
 
 
 class Order(AbstractTableMeta, models.Model):
+    id = models.BigAutoField(primary_key=True, auto_created=True, serialize=False, verbose_name='ID')
     client = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     STATUS = (
         ('Preparation', 'Preparation'),
