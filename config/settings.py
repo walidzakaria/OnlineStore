@@ -133,10 +133,20 @@ AUTH_USER_MODEL = 'authapp.User'
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'USERNAME_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'auth/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'auth/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'auth/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SET_USERNAME_RETYPE': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'SERIALIZERS': {
-        'user_create': 'apps.authapp.serializers.UserCreateSerializer',
-        'user': 'apps.authapp.serializers.UserCreateSerializer',
-        'current_user': 'apps.authapp.serializers.CurrentUserSerialier'
+        # 'user_create': 'apps.authapp.serializers.UserCreateSerializer',
+        # 'user': 'apps.authapp.serializers.UserCreateSerializer',
+        # 'current_user': 'apps.authapp.serializers.CurrentUserSerialier'
     }
 }
 
@@ -195,10 +205,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email settings
-
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.mail.yahoo.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.mail.yahoo.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-
