@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from .models import Purchase, Order
+from .models import Purchase, Order, OrderItems
 from apps.authapp.models import User
 
 
@@ -34,5 +34,11 @@ class OrderForm(ModelForm):
         if not self.cleaned_data['updated_by']:
             return User()
         return self.cleaned_data['updated_by']
+
+
+class OrderItemsForm(ModelForm):
+    class Meta:
+        model = OrderItems
+        fields = '__all__'
 
 

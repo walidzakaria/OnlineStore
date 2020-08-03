@@ -51,35 +51,34 @@ class Order(AbstractTableMeta, models.Model):
     status = models.CharField(max_length=15, choices=STATUS, default='Preparation')
     user_address = models.ForeignKey(UserAddress, on_delete=models.DO_NOTHING)
     notes = models.TextField(blank=True, null=True, default='')
-
-    @property
-    def number_of_items(self):
-        result = OrderItems.objects.filter(order=self).aggregate(Sum('quantity'))['quantity__sum']
-        return result
-
-    @property
-    def due_amount(self):
-        result = 0
-        sub_orders = OrderItems.objects.filter(order=self).all()
-        for i in sub_orders:
-            result += i.product_value
-        return result
+    # To be auto calculated
+    number_of_items = models.PositiveIntegerField(default=0)
+    due_amount = models.DecimalField(max_digits=17, decimal_places=2, default=0)
 
     def __str__(self):
         return f'{self.id}: {self.status}'
+
+    def calculate(self):
+        self.number_of_items = OrderItems.objects.filter(order=self.id).aggregate(Sum('quantity'))['quantity__sum']
+        self.due_amount = OrderItems.objects.filter(
+            order=self.id).aggregate(
+            Sum('product_value'))['product_value__sum']
+        self.save()
 
 
 class OrderItems(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.PositiveIntegerField()
-
-    @property
-    def product_value(self):
-        return self.quantity * self.product.price1
+    # To be auto calculated
+    product_value = models.DecimalField(max_digits=17, decimal_places=2, default=0)
 
     def __str__(self):
         return f'{self.order}, {self.product}, {self.quantity}, {self.product_value}'
+
+    def calculate(self):
+        self.product_value = self.quantity * self.product.price1
+        self.save()
 
     class Meta:
         verbose_name = 'Order Items'

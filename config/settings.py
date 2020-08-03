@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_multiple_model',
     'djoser',
     'apps.authapp',
     'apps.utils',
@@ -144,9 +145,9 @@ DJOSER = {
     'SET_PASSWORD_RETYPE': True,
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
     'SERIALIZERS': {
-        # 'user_create': 'apps.authapp.serializers.UserCreateSerializer',
-        # 'user': 'apps.authapp.serializers.UserCreateSerializer',
-        # 'current_user': 'apps.authapp.serializers.CurrentUserSerialier'
+        'user_create': 'apps.authapp.serializers.UserCreateSerializer',
+        'user': 'apps.authapp.serializers.UserCreateSerializer',
+        'current_user': 'apps.authapp.serializers.CurrentUserSerialier'
     }
 }
 
@@ -206,11 +207,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.mail.yahoo.com'
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587

@@ -1,6 +1,7 @@
 from django.contrib import admin
+from django.db.models import Sum
 
-from .forms import PurchaseForm, OrderForm
+from .forms import PurchaseForm, OrderForm, OrderItemsForm
 
 
 # Register your models here.
@@ -54,7 +55,19 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 class OrderItemsAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity', 'product_value',)
+    form = OrderItemsForm
+    list_display = ('order', 'product', 'quantity', 'price', 'product_value',)
+    readonly_fields = ('price', 'product_value',)
+
+    # to refer to a foreign key
+    def price(self, obj):
+        return obj.product.price1
+
+    def save_model(self, request, obj, form, change):
+        order = Order.objects.get(pk=obj.order.id)
+        order.updated_by = request.user
+        obj.calculate()
+        order.calculate()
 
 
 admin.site.register(Purchase, PurchaseAdmin)
