@@ -7,6 +7,7 @@ from apps.utils.models import AbstractTableMeta
 # Create your models here.
 class Brand(models.Model):
     name = models.CharField(max_length=150, unique=True, blank=False, verbose_name='Brand')
+    name_ar = models.CharField(max_length=150, blank=True, verbose_name='Brand-AR')
 
     def __str__(self):
         return f"{self.name}"
@@ -14,6 +15,7 @@ class Brand(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=150, unique=True, blank=False, verbose_name='Category')
+    name_ar = models.CharField(max_length=150, blank=True, verbose_name='Category-AR')
 
     def __str__(self):
         return f"{self.name}"
@@ -25,6 +27,7 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=150, unique=True, blank=False, verbose_name='Sub-Category')
+    name_ar = models.CharField(max_length=150, blank=True, verbose_name='Sub-Category-AR')
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
 
     def __str__(self):
@@ -37,6 +40,8 @@ class SubCategory(models.Model):
 
 class Product(AbstractTableMeta, models.Model):
     name = models.CharField(max_length=255, blank=False, verbose_name='Product')
+    name_ar = models.CharField(max_length=255, blank=True, verbose_name='Product-AR')
+    keywords = models.CharField(max_length=255, blank=True)
     brand = models.ForeignKey(Brand, on_delete=models.DO_NOTHING)
     sub_category = models.ForeignKey(SubCategory, on_delete=models.DO_NOTHING)
     price1 = models.DecimalField(max_digits=14, decimal_places=2)

@@ -7,6 +7,7 @@ from drf_multiple_model.views import ObjectMultipleModelAPIView
 
 from .models import UserAddress, Order
 from .serializers import UserAddressSerializer, OrderSerializer, OrderItemsSerializer
+from ..products.models import Category
 
 
 @api_view(['GET', 'POST', ])

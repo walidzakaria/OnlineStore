@@ -8,33 +8,38 @@ from .forms import ProductForm, ReviewForm
 
 # Register your models here.
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'name_ar',)
     list_filter = ('name',)
 
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name',)
+    list_display = ('id', 'name', 'name_ar',)
     list_filter = ('name',)
-    search_fields = ('name',)
+    search_fields = ('name', 'name_ar')
 
 
 class SubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'get_category',)
+    list_display = ('id', 'name', 'name_ar', 'get_category',)
     list_filter = ('category__name',)
-    search_fields = ('name', 'category__name',)
+    search_fields = ('name', 'category__name', 'name_ar')
 
     # to refer to a foreign key
     def get_category(self, obj):
         return obj.category.name
 
+    def get_category_ar(self, obj):
+        return obj.category.name_ar
+
     get_category.admin_order_field = 'category'
     get_category.short_description = 'Category Name'
+    get_category_ar.admin_order_field = 'category'
+    get_category_ar.short_description = 'Category Name AR'
 
 
 class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
 
-    list_display = ('id', 'name', 'brand', 'sub_category', 'price1',
+    list_display = ('id', 'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1',
                     'price2', 'updated_by', 'updated_at',
                     'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average', 'active')
     # prepopulated_fields = {'slug': ['title']}
@@ -43,7 +48,7 @@ class ProductAdmin(admin.ModelAdmin):
                        'preview_image1', 'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',)
     fieldsets = ((
          None, {
-             'fields': ('name', 'brand', 'sub_category', 'price1', 'price2', 'description',
+             'fields': ('name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
                         'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
                         'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5', 'active',)
          }), (
@@ -54,7 +59,8 @@ class ProductAdmin(admin.ModelAdmin):
          })
     )
     list_filter = ('sub_category__name', 'sub_category__category__name', 'brand__name', 'active',)
-    search_fields = ('sub_category__name', 'sub_category__category__name', 'brand__name',)
+    search_fields = ('sub_category__name', 'sub_category__category__name',
+                     'brand__name', 'name', 'name_ar', 'keywords')
 
     # to refer to sub category
     def get_sub_category(self, obj):
@@ -131,7 +137,6 @@ class ReviewAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.updated_by = request.user
         obj.save()
-
 
 
 admin.site.register(Brand, BrandAdmin)
