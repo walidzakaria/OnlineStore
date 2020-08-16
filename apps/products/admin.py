@@ -41,7 +41,8 @@ class ProductAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1',
                     'price2', 'updated_by', 'updated_at',
-                    'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average', 'active')
+                    'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
+                    'active', 'slider',)
     # prepopulated_fields = {'slug': ['title']}
     readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at',
                        'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
@@ -49,8 +50,9 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = ((
          None, {
              'fields': ('name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
-                        'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
-                        'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5', 'active',)
+                        'description_ar', 'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
+                        'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',
+                        'active', 'slider')
          }), (
          'Other Information', {
              'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
@@ -58,7 +60,7 @@ class ProductAdmin(admin.ModelAdmin):
              'classes': ('collapse',)
          })
     )
-    list_filter = ('sub_category__name', 'sub_category__category__name', 'brand__name', 'active',)
+    list_filter = ('active', 'slider', 'sub_category__name', 'sub_category__category__name', 'brand__name',)
     search_fields = ('sub_category__name', 'sub_category__category__name',
                      'brand__name', 'name', 'name_ar', 'keywords')
 

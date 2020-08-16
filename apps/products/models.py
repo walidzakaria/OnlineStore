@@ -47,12 +47,14 @@ class Product(AbstractTableMeta, models.Model):
     price1 = models.DecimalField(max_digits=14, decimal_places=2)
     price2 = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     description = models.TextField(max_length=1000, blank=True, null=True)
+    description_ar = models.TextField(max_length=1000, blank=True, null=True)
     image1 = models.ImageField(upload_to='products/', null=True, blank=True)
     image2 = models.ImageField(upload_to='products/', null=True, blank=True)
     image3 = models.ImageField(upload_to='products/', null=True, blank=True)
     image4 = models.ImageField(upload_to='products/', null=True, blank=True)
     image5 = models.ImageField(upload_to='products/', null=True, blank=True)
     active = models.BooleanField(default=True)
+    slider = models.BooleanField(default=False)
 
     @property
     def purchased(self):

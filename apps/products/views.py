@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 
-from .serializers import CategorySerializer, SubCategorySerializer
+from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
 from .models import Brand, Category, SubCategory, Product
 
 
@@ -37,3 +37,49 @@ def sub_category_list(request, lang):
         serializer = SubCategorySerializer(sub_categories, many=True)
         return Response(serializer.data)
 
+
+@api_view(['GET', ])
+def slider_product_list(request, lang):
+    """
+    List the slider products
+    """
+    if request.method == 'GET':
+        slider_products = Product.objects.filter(slider=True).all()
+        serializer = ProductSerializer(slider_products, many=True, context={'lang': lang})
+        return Response(serializer.data)
+
+
+@api_view(['GET', ])
+def subcategory_product_list(request, lang, subcategory_id):
+    """
+    List the the products filtered by a sub-category
+    """
+    if request.method == 'GET':
+
+        subcategory_products = Product.objects.filter(sub_category=subcategory_id).all()
+        serializer = ProductSerializer(subcategory_products, many=True, context={'lang': lang})
+        return Response(serializer.data)
+
+
+@api_view(['GET', ])
+def category_product_list(request, lang, category_id):
+    """
+    List the the products filtered by a category
+    """
+    if request.method == 'GET':
+
+        category_products = Product.objects.filter(sub_category__category=category_id).all()
+        serializer = ProductSerializer(category_products, many=True, context={'lang': lang})
+        return Response(serializer.data)
+
+
+@api_view(['GET', ])
+def search_product_list(request, lang):
+    """
+    List the the products filtered by a category
+    """
+    if request.method == 'GET':
+
+        category_products = Product.objects.filter(sub_category__category=category_id).all()
+        serializer = ProductSerializer(category_products, many=True, context={'lang': lang})
+        return Response(serializer.data)
