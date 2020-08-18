@@ -8,6 +8,7 @@ from .forms import ExchangeRateForm
 class CurrencyAdmin(admin.ModelAdmin):
     list_display = ('id', 'currency', 'currency_ar', 'code', 'rate',)
     search_fields = ('currency', 'currency_ar', 'code',)
+    readonly_fields = ('rate', )
 
 
 class ExchangeRateAdmin(admin.ModelAdmin):
@@ -35,9 +36,9 @@ class ExchangeRateAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         obj.updated_by = request.user
+        obj.save()
         update_rate = Currency.objects.get(pk=obj.currency.id)
         update_rate.calculate()
-        obj.save()
 
 
 admin.site.register(Currency, CurrencyAdmin)
