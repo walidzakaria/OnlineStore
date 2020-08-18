@@ -19,6 +19,7 @@ class Currency(models.Model):
         self.save()
 
     class Meta:
+        ordering = ['id']
         verbose_name = 'Currency'
         verbose_name_plural = 'Currencies'
 

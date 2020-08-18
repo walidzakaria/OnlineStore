@@ -32,6 +32,12 @@ IS_HEROKU = True
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
 
+# Cloudinary configs
+import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -50,6 +56,7 @@ INSTALLED_APPS = [
     'apps.products',
     'apps.orders',
     'apps.currencies',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +136,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
-
 AUTH_USER_MODEL = 'authapp.User'
 
 DJOSER = {
@@ -171,7 +177,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 SIMPLE_JWT = {
-   'AUTH_HEADER_TYPES': ('JWT',),
+    'AUTH_HEADER_TYPES': ('JWT',),
 }
 
 # Internationalization
@@ -213,3 +219,12 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+
+# Cloudinary configs
+cloudinary.config(
+    cloud_name="doit",
+    api_key="181346566272277",
+    api_secret="OLrMmNX1x6l027t4BachkoxVfns",
+    secure=True,
+)

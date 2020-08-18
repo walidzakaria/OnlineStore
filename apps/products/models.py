@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Sum, Avg
+from cloudinary.models import CloudinaryField
 
 from apps.utils.models import AbstractTableMeta
 
@@ -48,11 +49,19 @@ class Product(AbstractTableMeta, models.Model):
     price2 = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     description = models.TextField(max_length=1000, blank=True, null=True)
     description_ar = models.TextField(max_length=1000, blank=True, null=True)
-    image1 = models.ImageField(upload_to='products/', null=True, blank=True)
-    image2 = models.ImageField(upload_to='products/', null=True, blank=True)
-    image3 = models.ImageField(upload_to='products/', null=True, blank=True)
-    image4 = models.ImageField(upload_to='products/', null=True, blank=True)
-    image5 = models.ImageField(upload_to='products/', null=True, blank=True)
+    ## For demo development
+    image1 = CloudinaryField('image', blank=True, null=True)
+    image2 = CloudinaryField('image', blank=True, null=True)
+    image3 = CloudinaryField('image', blank=True, null=True)
+    image4 = CloudinaryField('image', blank=True, null=True)
+    image5 = CloudinaryField('image', blank=True, null=True)
+
+    ## For production development
+    # image1 = models.ImageField(upload_to='products/', null=True, blank=True)
+    # image2 = models.ImageField(upload_to='products/', null=True, blank=True)
+    # image3 = models.ImageField(upload_to='products/', null=True, blank=True)
+    # image4 = models.ImageField(upload_to='products/', null=True, blank=True)
+    # image5 = models.ImageField(upload_to='products/', null=True, blank=True)
     active = models.BooleanField(default=True)
     slider = models.BooleanField(default=False)
 
