@@ -216,4 +216,38 @@ response:
     }
 ]
 ```
+#### GET /currencies/exchange/
+- General:
+    - Retrieves all currencies with the latest exchange rate based on the admin entry
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/currencies/exchange/ 
+```
+response:
+```json
+[
+    {
+        "id": 1,
+        "currency": "Dollar",
+        "currency_ar": "دولار",
+        "code": "USD",
+        "rate": "1.0000"
+    },
+    {
+        "id": 3,
+        "currency": "Euro",
+        "currency_ar": "يورو",
+        "code": "EUR",
+        "rate": "1.2000"
+    },
+    {
+        "id": 2,
+        "currency": "Egyptian Pound",
+        "currency_ar": "جنيه مصري",
+        "code": "EGP",
+        "rate": "16.3300"
+    }
+]
+```
+
 to be continued...

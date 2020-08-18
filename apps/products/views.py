@@ -27,7 +27,7 @@ def category_list(request, lang):
 @api_view(['GET', ])
 def sub_category_list(request, lang):
     """
-    List all main categories
+    List all sub categories
     """
     if request.method == 'GET':
         if lang == 'EN':

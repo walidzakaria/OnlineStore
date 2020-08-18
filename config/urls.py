@@ -28,6 +28,7 @@ urlpatterns = [
     path('auth/', include('apps.authapp.urls')),
     path('products/', include('apps.products.urls')),
     path('orders/', include('apps.orders.urls')),
+    path('currencies/', include('apps.currencies.urls')),
 ]
 
 # to enable viewing images in media directory
