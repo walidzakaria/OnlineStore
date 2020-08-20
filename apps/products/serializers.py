@@ -41,13 +41,13 @@ class ProductSerializer(serializers.ModelSerializer):
             return obj.description_ar
 
     def get_price1(self, obj):
-        currency_id = self.context.get("currency")
-        currency = Currency.objects.get(pk=2)
+        currency_id = self.context.get("curr")
+        currency = Currency.objects.get(pk=currency_id)
         return obj.price1 * currency.rate
 
     def get_price2(self, obj):
-        currency_id = self.context.get("currency")
-        currency = Currency.objects.get(pk=2)
+        currency_id = self.context.get("curr")
+        currency = Currency.objects.get(pk=currency_id)
         return obj.price2 * currency.rate
 
     class Meta:

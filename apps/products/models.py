@@ -87,7 +87,10 @@ class Product(AbstractTableMeta, models.Model):
         balance = purchased - sold
 
         # apply changes
-        self.reduction = self.price2 - self.price1
+        if self.price2 == 0:
+            self.reduction = 0
+        else:
+            self.reduction = (self.price2 - self.price1) / self.price2
         self.purchased = purchased
         self.sold = sold
         self.balance = balance
