@@ -4,6 +4,7 @@ from django.db.models import Sum
 from apps.utils.models import AbstractTableMeta
 from apps.authapp.models import User
 from apps.products.models import Product
+from apps.currencies.models import ExchangeRate, Currency
 
 
 # Create your models here.
@@ -13,10 +14,10 @@ class Purchase(AbstractTableMeta, models.Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.PositiveIntegerField()
     net_price = models.DecimalField(max_digits=14, decimal_places=2)
+    product_value = models.DecimalField(max_digits=14, decimal_places=2, default=0)
 
-    @property
-    def product_value(self):
-        return self.quantity * self.net_price
+    def calculate(self):
+        self.product_value = self.quantity * self.net_price
 
     def __str__(self):
         return f'{self.id}: {self.product}: {self.quantity}, {self.product_value}'
@@ -54,6 +55,9 @@ class Order(AbstractTableMeta, models.Model):
     # To be auto calculated
     number_of_items = models.PositiveIntegerField(default=0)
     due_amount = models.DecimalField(max_digits=17, decimal_places=2, default=0)
+    currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
+    exchange_rate = models.DecimalField(max_digits=17, decimal_places=4, default=0)
+    exchanged_due_amount = models.DecimalField(max_digits=17, decimal_places=2, default=0)
 
     def __str__(self):
         return f'{self.id}: {self.status}'
@@ -63,6 +67,11 @@ class Order(AbstractTableMeta, models.Model):
         self.due_amount = OrderItems.objects.filter(
             order=self.id).aggregate(
             Sum('product_value'))['product_value__sum']
+        exchange_rate = ExchangeRate.objects.filter(currency=self.currency.id). \
+            filter(apply_date__lte=self.created_at).order_by('-apply_date').first()
+        print(exchange_rate)
+        self.exchange_rate = exchange_rate.rate
+        self.exchanged_due_amount = self.exchange_rate * self.due_amount
         self.save()
 
 
@@ -73,6 +82,7 @@ class OrderItems(models.Model):
     quantity = models.PositiveIntegerField()
     # To be auto calculated
     product_value = models.DecimalField(max_digits=17, decimal_places=2, default=0)
+
 
     def __str__(self):
         return f'{self.order}, {self.product}, {self.quantity}, {self.product_value}'

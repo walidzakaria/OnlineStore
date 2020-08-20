@@ -14,7 +14,8 @@ class Currency(models.Model):
         return f'{self.currency}, {self.code}'
 
     def calculate(self):
-        last_rate = ExchangeRate.objects.filter(currency=self.id).order_by('-date').first()
+        last_rate = ExchangeRate.objects.filter(currency=self.id)\
+            .order_by('-apply_date').first()
         self.rate = last_rate.rate
         self.save()
 
@@ -26,14 +27,14 @@ class Currency(models.Model):
 
 class ExchangeRate(AbstractTableMeta, models.Model):
     currency = models.ForeignKey(Currency, on_delete=models.CASCADE)
-    date = models.DateTimeField()
+    apply_date = models.DateTimeField()
     rate = models.DecimalField(max_digits=14, decimal_places=4)
 
     def __str__(self):
-        return f'{self.id}, {self.date}, {self.rate}'
+        return f'{self.currency.code}, {self.rate}'
 
     class Meta:
-        ordering: ['-date']
+        ordering: ['-apply_date']
         verbose_name = 'Exchange Rate'
         verbose_name_plural = 'Exchange Rates'
 

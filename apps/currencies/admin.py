@@ -13,12 +13,12 @@ class CurrencyAdmin(admin.ModelAdmin):
 
 class ExchangeRateAdmin(admin.ModelAdmin):
     form = ExchangeRateForm
-    list_display = ('id', 'get_currency', 'date', 'rate', 'updated_by', 'updated_at',)
+    list_display = ('id', 'get_currency', 'apply_date', 'rate', 'updated_by', 'updated_at',)
     readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at',)
 
     fieldsets = ((
                      None, {
-                         'fields': ('currency', 'date', 'rate',)
+                         'fields': ('currency', 'apply_date', 'rate',)
                      }), (
                      'Other Information', {
                          'fields': ('created_at', 'created_by', 'updated_at', 'updated_by',),

@@ -47,6 +47,7 @@ class Product(AbstractTableMeta, models.Model):
     sub_category = models.ForeignKey(SubCategory, on_delete=models.DO_NOTHING)
     price1 = models.DecimalField(max_digits=14, decimal_places=2)
     price2 = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    reduction = models.DecimalField(max_digits=14, decimal_places=2, default=0)
     description = models.TextField(max_length=1000, blank=True, null=True)
     description_ar = models.TextField(max_length=1000, blank=True, null=True)
     ## For demo development
@@ -64,36 +65,40 @@ class Product(AbstractTableMeta, models.Model):
     # image5 = models.ImageField(upload_to='products/', null=True, blank=True)
     active = models.BooleanField(default=True)
     slider = models.BooleanField(default=False)
+    purchased = models.PositiveIntegerField(default=0)
+    sold = models.PositiveIntegerField(default=0)
+    balance = models.IntegerField(default=0)
+    rating_average = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, default=5.00)
+    number_of_reviews = models.PositiveIntegerField(default=0)
 
-    @property
-    def purchased(self):
-        from apps.orders.models import Purchase
-        result = 0
+    def save(self, *args, **kwargs):
+        self.calculate()
+        self.calc_reviews()
+        super(Product, self).save(*args, **kwargs)
+
+    def calculate(self):
+        from apps.orders.models import Purchase, OrderItems
         purchased = Purchase.objects.filter(product=self).aggregate(Sum('quantity'))['quantity__sum']
-        if purchased is not None:
-            result = purchased
-        return result
-
-    @property
-    def sold(self):
-        from apps.orders.models import OrderItems
-        result = 0
+        if purchased is None:
+            purchased = 0
         sold = OrderItems.objects.filter(product=self).aggregate(Sum('quantity'))['quantity__sum']
-        if sold is not None:
-            result = sold
-        return result
+        if sold is None:
+            sold = 0
+        balance = purchased - sold
 
-    @property
-    def balance(self):
-        return self.purchased - self.sold
+        # apply changes
+        self.reduction = self.price2 - self.price1
+        self.purchased = purchased
+        self.sold = sold
+        self.balance = balance
 
-    @property
-    def number_of_reviews(self):
-        return Review.objects.filter(product=self).count()
+    def calc_reviews(self):
+        number_of_reviews = Review.objects.filter(product=self).count()
+        rating_average = Review.objects.filter(product=self).aggregate(Avg('rating'))['rating__avg']
 
-    @property
-    def rating_average(self):
-        return Review.objects.filter(product=self).aggregate(Avg('rating'))['rating__avg']
+        # apply changes
+        self.number_of_reviews = number_of_reviews
+        self.rating_average = rating_average
 
     def __str__(self):
         return f"{self.name} ({self.brand.name})"
@@ -108,8 +113,25 @@ class Review(AbstractTableMeta, models.Model):
         (4, "****"),
         (5, "*****"),
     )
-    rating = models.SmallIntegerField(choices=RATING, default=1)
+    rating = models.SmallIntegerField(choices=RATING, default=5)
     comment = models.TextField(max_length=1000, null=True, blank=True, default='')
+    __original_product = None
+
+    def __init__(self, *args, **kwargs):
+        super(Review, self).__init__(*args, *kwargs)
+        try:
+            self.__original_product = self.product
+        except:
+            pass
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        super(Review, self).save(force_insert, force_update, *args, **kwargs)
+        if self.__original_product is not None and self.__original_product != self.product:
+            self.__original_product.save()
+            self.product.save()
+        else:
+            self.product.save()
+        self.__original_product = self.product
 
     def __str__(self):
         return f'{self.id}: {self.product}, {self.rating}'

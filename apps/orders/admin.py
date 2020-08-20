@@ -2,10 +2,12 @@ from django.contrib import admin
 from django.db.models import Sum
 
 from .forms import PurchaseForm, OrderForm, OrderItemsForm
+from apps.currencies.models import ExchangeRate
 
 
 # Register your models here.
 from .models import Purchase, Order, UserAddress, OrderItems
+from ..products.models import Product
 
 
 class PurchaseAdmin(admin.ModelAdmin):
@@ -27,7 +29,23 @@ class PurchaseAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         obj.updated_by = request.user
+        obj.calculate()
         obj.save()
+        new_product = form.cleaned_data.get('product')
+        product = Product.objects.get(pk=obj.product.id)
+        print(new_product)
+        print(product)
+
+        product.calculate()
+        product.save()
+
+    def delete_model(self, request, obj):
+
+        product = Product.objects.get(pk=obj.product.id)
+        obj.delete()
+        product.calculate()
+        print('deleted ', product)
+        product.save()
 
 
 class UserAddressAdmin(admin.ModelAdmin):
@@ -36,22 +54,25 @@ class UserAddressAdmin(admin.ModelAdmin):
 
 class OrderAdmin(admin.ModelAdmin):
     form = OrderForm
-    list_display = ('id', 'client', 'status', 'user_address', 'notes', 'number_of_items', 'due_amount',)
-    readonly_fields = ('number_of_items', 'due_amount', 'created_by', 'created_at', 'updated_by', 'updated_at',)
+    list_display = ('id', 'client', 'status', 'user_address', 'notes', 'number_of_items',
+                    'due_amount', 'exchanged_due_amount', 'currency',)
+    readonly_fields = ('number_of_items', 'due_amount', 'created_by', 'created_at',
+                       'updated_by', 'updated_at', 'exchange_rate', 'exchanged_due_amount',)
     fieldsets = (
-        (None, {'fields': ('client', 'status', 'user_address', 'number_of_items', 'due_amount', 'notes',)}),
+        (None, {'fields': ('client', 'status', 'user_address', 'number_of_items', 'due_amount',
+                           'currency', 'exchange_rate', 'exchanged_due_amount', 'notes')}),
         ('Other Information', {
             'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
             'classes': ('collapse',)
         }))
     search_fields = ('id',)
-    list_filter = ('client',)
+    # list_filter = ('client',)
 
     def save_model(self, request, obj, form, change):
         if not change:
             obj.created_by = request.user
         obj.updated_by = request.user
-        obj.save()
+        obj.calculate()
 
 
 class OrderItemsAdmin(admin.ModelAdmin):
@@ -68,6 +89,9 @@ class OrderItemsAdmin(admin.ModelAdmin):
         order.updated_by = request.user
         obj.calculate()
         order.calculate()
+        product = Product.objects.get(pk=obj.product.id)
+        product.calculate()
+        product.save()
 
 
 admin.site.register(Purchase, PurchaseAdmin)

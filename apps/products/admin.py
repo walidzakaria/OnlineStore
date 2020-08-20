@@ -45,20 +45,21 @@ class ProductAdmin(admin.ModelAdmin):
                     'active', 'slider',)
     # prepopulated_fields = {'slug': ['title']}
     readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at',
-                       'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
+                       'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average', 'reduction',
                        'preview_image1', 'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',)
     fieldsets = ((
-         None, {
-             'fields': ('name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
-                        'description_ar', 'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
-                        'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',
-                        'active', 'slider')
-         }), (
-         'Other Information', {
-             'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
-                        'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',),
-             'classes': ('collapse',)
-         })
+                     None, {
+                         'fields': (
+                         'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
+                         'description_ar', 'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
+                         'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',
+                         'active', 'slider')
+                     }), (
+                     'Other Information', {
+                         'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
+                                    'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',),
+                         'classes': ('collapse',)
+                     })
     )
     list_filter = ('active', 'slider', 'sub_category__name', 'sub_category__category__name', 'brand__name',)
     search_fields = ('sub_category__name', 'sub_category__category__name',
@@ -123,15 +124,15 @@ class ReviewAdmin(admin.ModelAdmin):
     list_display = ('product', 'rating', 'comment', 'updated_by', 'updated_at')
     readonly_fields = ('updated_by', 'updated_at', 'created_by', 'created_at',)
     list_filter = ('product', 'rating',)
-    search_fields = ('product', )
+    search_fields = ('product',)
     fieldsets = ((
-         None, {
-             'fields': ('product', 'rating', 'comment',)
-         }), (
-         'Other Information', {
-             'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
-             'classes': ('collapse',)
-         })
+                     None, {
+                         'fields': ('product', 'rating', 'comment',)
+                     }), (
+                     'Other Information', {
+                         'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
+                         'classes': ('collapse',)
+                     })
     )
 
     def save_model(self, request, obj, form, change):
@@ -139,6 +140,20 @@ class ReviewAdmin(admin.ModelAdmin):
             obj.created_by = request.user
         obj.updated_by = request.user
         obj.save()
+
+    def delete_model(self, request, obj):
+        print(obj)
+        product = Product.objects.get(pk=obj.product.id)
+        obj.delete()
+        product.save()
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+
 
 
 admin.site.register(Brand, BrandAdmin)
