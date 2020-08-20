@@ -1,5 +1,10 @@
+from datetime import date
+
 from django.db import models
 from django.db.models import Sum
+import pyzt
+from django.utils import timezone
+
 
 from apps.utils.models import AbstractTableMeta
 from apps.authapp.models import User
@@ -15,9 +20,24 @@ class Purchase(AbstractTableMeta, models.Model):
     quantity = models.PositiveIntegerField()
     net_price = models.DecimalField(max_digits=14, decimal_places=2)
     product_value = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    __original_product = None
 
-    def calculate(self):
+    def __init__(self, *args, **kwargs):
+        super(Purchase, self).__init__(*args, **kwargs)
+        try:
+            self.__original_product = self.product
+        except:
+            pass
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         self.product_value = self.quantity * self.net_price
+        super(Purchase, self).save(force_insert, force_update, *args, **kwargs)
+        if self.__original_product is not None and self.__original_product != self.product:
+            self.__original_product.save()
+            self.product.save()
+        else:
+            self.product.save()
+        self.__original_product = self.product
 
     def __str__(self):
         return f'{self.id}: {self.product}: {self.quantity}, {self.product_value}'
@@ -62,34 +82,74 @@ class Order(AbstractTableMeta, models.Model):
     def __str__(self):
         return f'{self.id}: {self.status}'
 
-    def calculate(self):
-        self.number_of_items = OrderItems.objects.filter(order=self.id).aggregate(Sum('quantity'))['quantity__sum']
-        self.due_amount = OrderItems.objects.filter(
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        number_of_items = OrderItems.objects.filter(order=self.id).aggregate(Sum('quantity'))['quantity__sum']
+        if number_of_items is None:
+            self.number_of_items = 0
+        else:
+            self.number_of_items = number_of_items
+
+        due_amount = OrderItems.objects.filter(
             order=self.id).aggregate(
             Sum('product_value'))['product_value__sum']
-        exchange_rate = ExchangeRate.objects.filter(currency=self.currency.id). \
-            filter(apply_date__lte=self.created_at).order_by('-apply_date').first()
-        print(exchange_rate)
-        self.exchange_rate = exchange_rate.rate
-        self.exchanged_due_amount = self.exchange_rate * self.due_amount
-        self.save()
+        if due_amount is None:
+            self.due_amount = 0
+        else:
+            self.due_amount = due_amount
+        exchange_date = self.created_at
+        if not exchange_date:
+            exchange_date = timezone.now()
+
+        exchange_rate = ExchangeRate.objects.filter(currency=self.currency.id).\
+            filter(apply_date__lte=exchange_date).order_by('-apply_date').first()
+
+        if exchange_rate is not None:
+            self.exchange_rate = exchange_rate.rate
+            self.exchanged_due_amount = self.exchange_rate * self.due_amount
+        else:
+            self.exchange_rate = 0
+            self.exchanged_due_amount = self.due_amount
+
+        super(Order, self).save(force_insert, force_update, *args, **kwargs)
 
 
-# Just test
 class OrderItems(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.PositiveIntegerField()
     # To be auto calculated
     product_value = models.DecimalField(max_digits=17, decimal_places=2, default=0)
+    __original_product = None
+    __original_order = None
 
+    def __init__(self, *args, **kwargs):
+        super(OrderItems, self).__init__(*args, **kwargs)
+        try:
+            self.__original_product = self.product
+            self.__original_order = self.order
+        except:
+            pass
 
     def __str__(self):
         return f'{self.order}, {self.product}, {self.quantity}, {self.product_value}'
 
-    def calculate(self):
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
         self.product_value = self.quantity * self.product.price1
-        self.save()
+        super(OrderItems, self).save(force_insert, force_update, *args, **kwargs)
+        self.order.save()
+        if self.__original_product is not None and self.__original_product != self.product:
+            self.__original_product.save()
+            self.product.save()
+        else:
+            self.product.save()
+        self.__original_product = self.product
+
+        if self.__original_order is not None and self.__original_product != self.order:
+            self.__original_order.save()
+            self.order.save()
+        else:
+            self.order.save()
+        self.__original_order = self.order
 
     class Meta:
         verbose_name = 'Order Items'

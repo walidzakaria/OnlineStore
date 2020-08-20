@@ -29,23 +29,27 @@ class PurchaseAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         obj.updated_by = request.user
-        obj.calculate()
         obj.save()
-        new_product = form.cleaned_data.get('product')
-        product = Product.objects.get(pk=obj.product.id)
-        print(new_product)
-        print(product)
-
-        product.calculate()
-        product.save()
 
     def delete_model(self, request, obj):
-
         product = Product.objects.get(pk=obj.product.id)
         obj.delete()
-        product.calculate()
-        print('deleted ', product)
         product.save()
+
+    def delete_selection(self, request, obj):
+        for o in obj.all():
+            product = Product.objects.get(pk=o.product.id)
+            o.delete()
+            product.save()
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+    actions = ['delete_selection']
+    delete_selection.short_description = 'Delete selected purchases'
 
 
 class UserAddressAdmin(admin.ModelAdmin):
@@ -72,7 +76,33 @@ class OrderAdmin(admin.ModelAdmin):
         if not change:
             obj.created_by = request.user
         obj.updated_by = request.user
-        obj.calculate()
+        obj.save()
+
+    def delete_model(self, request, obj):
+        order_items = OrderItems.objects.filter(order=obj.id).all()
+        for i in order_items:
+            product = Product.objects.get(pk=i.product.id)
+            i.delete()
+            product.save()
+        obj.delete()
+
+    def delete_selection(self, request, obj):
+        for o in obj.all():
+            order_items = OrderItems.objects.filter(order=o.id).all()
+            for i in order_items:
+                product = Product.objects.get(pk=i.product.id)
+                i.delete()
+                product.save()
+            o.delete()
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+    actions = ['delete_selection']
+    delete_selection.short_description = 'Delete selected orders'
 
 
 class OrderItemsAdmin(admin.ModelAdmin):
@@ -84,14 +114,29 @@ class OrderItemsAdmin(admin.ModelAdmin):
     def price(self, obj):
         return obj.product.price1
 
-    def save_model(self, request, obj, form, change):
-        order = Order.objects.get(pk=obj.order.id)
-        order.updated_by = request.user
-        obj.calculate()
-        order.calculate()
+    def delete_model(self, request, obj):
         product = Product.objects.get(pk=obj.product.id)
-        product.calculate()
+        order = Order.objects.get(pk=obj.order.id)
+        obj.delete()
+        order.save()
         product.save()
+
+    def delete_selection(self, request, obj):
+        for o in obj.all():
+            product = Product.objects.get(pk=o.product.id)
+            order = Order.objects.get(pk=o.order.id)
+            o.delete()
+            product.save()
+            order.save()
+
+    def get_actions(self, request):
+        actions = super().get_actions(request)
+        if 'delete_selected' in actions:
+            del actions['delete_selected']
+        return actions
+
+    actions = ['delete_selection']
+    delete_selection.short_description = 'Delete selected order items'
 
 
 admin.site.register(Purchase, PurchaseAdmin)

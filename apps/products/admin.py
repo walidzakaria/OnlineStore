@@ -142,10 +142,15 @@ class ReviewAdmin(admin.ModelAdmin):
         obj.save()
 
     def delete_model(self, request, obj):
-        print(obj)
         product = Product.objects.get(pk=obj.product.id)
         obj.delete()
         product.save()
+
+    def delete_selection(self, request, obj):
+        for o in obj.all():
+            product = Product.objects.get(pk=o.product.id)
+            o.delete()
+            product.save()
 
     def get_actions(self, request):
         actions = super().get_actions(request)
@@ -153,6 +158,8 @@ class ReviewAdmin(admin.ModelAdmin):
             del actions['delete_selected']
         return actions
 
+    actions = ['delete_selection']
+    delete_selection.short_description = 'Delete selected reviews'
 
 
 
