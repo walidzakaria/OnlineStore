@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from apps.currencies.models import Currency
 from apps.products.models import Category, SubCategory, Product
 
 
@@ -22,6 +23,8 @@ class ProductSerializer(serializers.ModelSerializer):
     sub_category = SubCategorySerializer(many=False, read_only=True)
     product_name = serializers.SerializerMethodField('get_product_name')
     product_description = serializers.SerializerMethodField('get_product_description')
+    price1 = serializers.SerializerMethodField('get_price1')
+    price2 = serializers.SerializerMethodField('get_price2')
 
     def get_product_name(self, obj):
         lang = self.context.get("lang")
@@ -36,6 +39,16 @@ class ProductSerializer(serializers.ModelSerializer):
             return obj.description
         else:
             return obj.description_ar
+
+    def get_price1(self, obj):
+        currency_id = self.context.get("currency")
+        currency = Currency.objects.get(pk=2)
+        return obj.price1 * currency.rate
+
+    def get_price2(self, obj):
+        currency_id = self.context.get("currency")
+        currency = Currency.objects.get(pk=2)
+        return obj.price2 * currency.rate
 
     class Meta:
         model = Product

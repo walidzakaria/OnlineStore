@@ -14,10 +14,9 @@ from .views import category_list, sub_category_list, slider_product_list, subcat
 urlpatterns = [
     path('categories/<str:lang>', category_list, name="category-list"),
     path('subcategories/<str:lang>', sub_category_list, name="sub_category-list"),
-    path('slider/<str:lang>', slider_product_list, name="slider-list"),
+    path('slider/<str:lang>/<int:currency>', slider_product_list, name="slider-list"),
     path('subcategories/<int:subcategory_id>/<str:lang>',
          subcategory_product_list, name="subcategory-product-list"),
     path('categories/<int:category_id>/<str:lang>',
          category_product_list, name="category-product-list"),
-
 ]

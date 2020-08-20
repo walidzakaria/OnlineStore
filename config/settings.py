@@ -27,7 +27,7 @@ SECRET_KEY = '2fq*f8_j^7)wujhw3br@%4p0=p4duri&q*%j*@0m7mi2-_i-av'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-IS_HEROKU = True
+IS_HEROKU = False
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
@@ -132,8 +132,8 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 2,
 }
 
 AUTH_USER_MODEL = 'authapp.User'
