@@ -114,13 +114,14 @@ response:
 ]
 ```
 
-#### GET /products/slider/{language}
+#### GET /products/slider/{currency_id}/{language}
 - General:
     - Retrieves the products that are set by the admin to show on the slider.
+    - currency_id parameter defines the exchanged product price.
     - ar/en language parameters are set for the product name and description.
 - Sample:
 ```commandline
-https://mystore9.herokuapp.com/products/slider/en 
+https://mystore9.herokuapp.com/products/slider/1/en 
 ```
 response:
 ```json
@@ -148,73 +149,88 @@ response:
     }
 ]
 ```
-#### GET /products/categories/{category_id}/{language}
+#### GET /products/categories/{category_id}/{currency_id}/{language}
 - General:
     - Retrieves all the products that belong to the selected category id.
+    - currency_id parameter defines the exchanged product price.
     - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
+    
 - Sample:
 ```commandline
-https://mystore9.herokuapp.com/products/categories/2/en 
+https://mystore9.herokuapp.com/products/categories/1/1/en 
 ```
 response:
 ```json
-[
-    {
-        "id": 4,
-        "brand_name": "Xiaomi",
-        "sub_category": {
-            "id": 5,
-            "category_name": "Electronics",
-            "name": "Mobiles",
-            "name_ar": "",
-            "category": 2
-        },
-        "product_name": "Redmi note 9s",
-        "price1": "90.00",
-        "price2": "0.00",
-        "product_description": "",
-        "image1": "/media/products/note_9s.jpg",
-        "image2": null,
-        "image3": null,
-        "image4": null,
-        "image5": null,
-        "brand": 5
-    }
-]
+{
+    "count": 4,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 3,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "test",
+            "price1": 200.0,
+            "price2": 0.0,
+            "product_description": "some details here to check if they appear or not.",
+            "image1": "image/upload/products/فؤاد_المهندس.jpg",
+            "image2": "image/upload/products/James_Breasted_2.jpg",
+            "image3": "image/upload/products/الأديب_يوسف_السباعي_82dxQfh.jpg",
+            "image4": "image/upload/products/Fouad_el-Mohandes.jpg",
+            "image5": "image/upload/products/test_image_9RPyJN1.jpg",
+            "brand": 1
+        }
+    ]
+}
 ```
-#### GET /products/subcategories/{subcategory_id}/{language}
+#### GET /products/subcategories/{subcategory_id}/{currency_id}/{language}
 - General:
     - Retrieves all the products that belong to the selected subcategory id.
+    - currency_id parameter defines the exchanged product price.
     - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
 - Sample:
 ```commandline
-https://mystore9.herokuapp.com/products/subcategories/5/en 
+https://mystore9.herokuapp.com/products/subcategories/1/1/en 
 ```
 response:
 ```json
-[
-    {
-        "id": 4,
-        "brand_name": "Xiaomi",
-        "sub_category": {
-            "id": 5,
-            "category_name": "Electronics",
-            "name": "Mobiles",
-            "name_ar": "",
-            "category": 2
-        },
-        "product_name": "Redmi note 9s",
-        "price1": "90.00",
-        "price2": "0.00",
-        "product_description": "",
-        "image1": "/media/products/note_9s.jpg",
-        "image2": null,
-        "image3": null,
-        "image4": null,
-        "image5": null,
-        "brand": 5
-    }
-]
+{
+    "count": 4,
+    "next": "http://127.0.0.1:8000/products/subcategories/1/1/en?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 3,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "test",
+            "price1": 200.0,
+            "price2": 0.0,
+            "product_description": "some details here to check if they appear or not.",
+            "image1": "image/upload/products/فؤاد_المهندس.jpg",
+            "image2": "image/upload/products/James_Breasted_2.jpg",
+            "image3": "image/upload/products/الأديب_يوسف_السباعي_82dxQfh.jpg",
+            "image4": "image/upload/products/Fouad_el-Mohandes.jpg",
+            "image5": "image/upload/products/test_image_9RPyJN1.jpg",
+            "brand": 1
+        }
+    ]
+}
 ```
 #### GET /currencies/exchange/
 - General:
@@ -248,6 +264,208 @@ response:
         "rate": "16.3300"
     }
 ]
+```
+
+#### GET /products/subcategories/{subcategory_id}/{currency_id}/{language}
+- General:
+    - Retrieves all the products that belong to the selected subcategory id.
+    - currency_id parameter defines the exchanged product price.
+    - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/subcategories/1/1/en 
+```
+response:
+```json
+{
+    "count": 4,
+    "next": "http://127.0.0.1:8000/products/subcategories/1/1/en?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 3,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "test",
+            "price1": 200.0,
+            "price2": 0.0,
+            "product_description": "some details here to check if they appear or not.",
+            "image1": "image/upload/products/فؤاد_المهندس.jpg",
+            "image2": "image/upload/products/James_Breasted_2.jpg",
+            "image3": "image/upload/products/الأديب_يوسف_السباعي_82dxQfh.jpg",
+            "image4": "image/upload/products/Fouad_el-Mohandes.jpg",
+            "image5": "image/upload/products/test_image_9RPyJN1.jpg",
+            "brand": 1
+        }
+    ]
+}
+```
+#### GET /currencies/exchange/
+- General:
+    - Retrieves all currencies with the latest exchange rate based on the admin entry
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/currencies/exchange/ 
+```
+response:
+```json
+[
+    {
+        "id": 1,
+        "currency": "Dollar",
+        "currency_ar": "دولار",
+        "code": "USD",
+        "rate": "1.0000"
+    },
+    {
+        "id": 3,
+        "currency": "Euro",
+        "currency_ar": "يورو",
+        "code": "EUR",
+        "rate": "1.2000"
+    },
+    {
+        "id": 2,
+        "currency": "Egyptian Pound",
+        "currency_ar": "جنيه مصري",
+        "code": "EGP",
+        "rate": "16.3300"
+    }
+]
+```
+
+#### GET /products/trending/{currency_id}/{language}
+- General:
+    - Retrieves all the products ordered by sold quantities.
+    - currency_id parameter defines the exchanged product price.
+    - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/trending/1/en 
+```
+response:
+```json
+{
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "",
+            "price1": 10.0,
+            "price2": 20.0,
+            "product_description": "",
+            "image1": null,
+            "image2": null,
+            "image3": null,
+            "image4": null,
+            "image5": null,
+            "brand": 1
+        }
+    ]
+}
+```
+
+#### GET /products/best-selling/{currency_id}/{language}
+- General:
+    - Retrieves all the products ordered reductions.
+    - currency_id parameter defines the exchanged product price.
+    - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/best-selling/1/en 
+```
+response:
+```json
+{
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "test product",
+            "price1": 10.0,
+            "price2": 20.0,
+            "product_description": "this is description",
+            "image1": null,
+            "image2": null,
+            "image3": null,
+            "image4": null,
+            "image5": null,
+            "brand": 1
+        }
+    ]
+}
+```
+
+#### GET /products/search/{currency_id}/{lang}/?search={search_pattern}
+- General:
+    - Retrieves all the products matching the search parameters.
+    - Filtered fields are ('name', 'name_ar', 'keywords', 'brand name', 'brand name_ar', 'sub_category name', 'sub_category name_ar', 'category name', 'category_name_ar', 'description').
+    - currency_id parameter defines the exchanged product price.
+    - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/search/1/en/?search=test 
+```
+response:
+```json
+{
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 3,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "test",
+            "price1": 200.0,
+            "price2": 0.0,
+            "product_description": "some details here to check if they appear or not.",
+            "image1": "image/upload/products/فؤاد_المهندس.jpg",
+            "image2": "image/upload/products/James_Breasted_2.jpg",
+            "image3": "image/upload/products/الأديب_يوسف_السباعي_82dxQfh.jpg",
+            "image4": "image/upload/products/Fouad_el-Mohandes.jpg",
+            "image5": "image/upload/products/test_image_9RPyJN1.jpg",
+            "brand": 1
+        }
+  ]
+}
 ```
 
 to be continued...
