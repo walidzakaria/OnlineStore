@@ -3,6 +3,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action, api_view
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
@@ -57,7 +58,7 @@ def slider_product_list(request, currency_id, lang):
 
 
 @api_view(['GET', ])
-def subcategory_product_list(request, lang, currency_id,subcategory_id):
+def subcategory_product_list(request, lang, currency_id, subcategory_id):
     """
     List the the products filtered by a sub-category in paginated view
     """
@@ -76,7 +77,7 @@ def subcategory_product_list(request, lang, currency_id,subcategory_id):
 
 
 @api_view(['GET', ])
-def category_product_list(request, category_id, currency_id,lang):
+def category_product_list(request, category_id, currency_id, lang):
     """
     List the the products filtered by a category in paginated view
     """
@@ -117,16 +118,22 @@ def best_selling_product_list(request, currency_id, lang):
         return paginator.get_paginated_response(serializer.data)
 
 
+class ApiProductList(ListAPIView):
+    serializer_class = ProductSerializer
+    # queryset = Product.objects.all()
 
-# @api_view(['GET', ])
-# def search_product_list(request, lang):
-#     """
-#     List the the products filtered by a category
-#     """
-#     if request.method == 'GET':
-#         category_products = Product.objects.filter(sub_category__category=category_id).all()
-#         serializer = ProductSerializer(category_products, many=True, context={'lang': lang})
-#         return Response(serializer.data)
+    def get_queryset(self):
+        lang = self.kwargs.get('lang')
+        currency_id = self.kwargs.get('currency_id')
+        self.serializer_class.context = {'lang': lang, 'curr': currency_id}
+        return Product.objects.all()
+
+    pagination_class = PageNumberPagination
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('name', 'name_ar', 'keywords', 'brand__name', 'brand__name_ar',
+                     'sub_category__name', 'sub_category__name_ar',
+                     'sub_category__category__name', 'sub_category__category__name_ar',
+                     'description',)
 
 # class ApiProductList(ListAPIView):
 #
@@ -138,4 +145,3 @@ def best_selling_product_list(request, currency_id, lang):
 #         queryset = Product.objects.all()
 #         serializer_class = ProductSerializer
 #         return Response(serializer_class)
-
