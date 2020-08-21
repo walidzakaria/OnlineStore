@@ -269,6 +269,7 @@ response:
 #### GET /products/trending/{currency_id}/{language}
 - General:
     - Retrieves all the products ordered by sold quantities.
+    - Products retrieved are only the ones that still in the stock.
     - currency_id parameter defines the exchanged product price.
     - ar/en language parameters are set for the product name and description.
     - Retrieved data is paginated.
@@ -311,6 +312,7 @@ response:
 #### GET /products/best-selling/{currency_id}/{language}
 - General:
     - Retrieves all the products ordered reductions.
+    - Products retrieved are only the ones that still in the stock.
     - currency_id parameter defines the exchanged product price.
     - ar/en language parameters are set for the product name and description.
     - Retrieved data is paginated.
