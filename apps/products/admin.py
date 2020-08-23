@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Brand, Category, SubCategory, Product, Review
+from .models import Brand, Category, SubCategory, Product, Review, Slider
 from apps.authapp.models import User
-from .forms import ProductForm, ReviewForm
+from .forms import ProductForm, ReviewForm, SliderForm
 
 
 # Register your models here.
@@ -42,7 +42,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1',
                     'price2', 'updated_by', 'updated_at',
                     'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
-                    'active', 'slider',)
+                    'active',)
     # prepopulated_fields = {'slug': ['title']}
     readonly_fields = ('created_by', 'created_at', 'updated_by', 'updated_at',
                        'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average', 'reduction',
@@ -50,10 +50,10 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = ((
                      None, {
                          'fields': (
-                         'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
-                         'description_ar', 'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
-                         'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',
-                         'active', 'slider')
+                             'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
+                             'description_ar', 'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
+                             'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',
+                             'active',)
                      }), (
                      'Other Information', {
                          'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',
@@ -61,7 +61,7 @@ class ProductAdmin(admin.ModelAdmin):
                          'classes': ('collapse',)
                      })
     )
-    list_filter = ('active', 'slider', 'sub_category__name', 'sub_category__category__name', 'brand__name',)
+    list_filter = ('active', 'sub_category__name', 'sub_category__category__name', 'brand__name',)
     search_fields = ('sub_category__name', 'sub_category__category__name',
                      'brand__name', 'name', 'name_ar', 'keywords')
 
@@ -162,9 +162,45 @@ class ReviewAdmin(admin.ModelAdmin):
     delete_selection.short_description = 'Delete selected reviews'
 
 
+class SliderAdmin(admin.ModelAdmin):
+    form = SliderForm
+    list_display = ('name', 'link_field', 'updated_by', 'updated_at', 'active')
+    readonly_fields = ('updated_by', 'updated_at', 'created_by', 'created_at',
+                       'preview_image', 'link_field',)
+    search_fields = ('name',)
+    list_filter = ('active', )
+    fieldsets = ((
+                     None, {
+                         'fields': ('name', 'image', 'preview_image', 'link', 'link_field', 'active',)
+                     }), (
+                     'Other Information', {
+                         'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
+                         'classes': ('collapse',)
+                     })
+    )
+
+    def preview_image(self, obj):
+        return mark_safe('<img src="{url}" width="{width}%" height={height} />'.format(
+            url=obj.image.url,
+            width=100,
+            height=480,
+        ))
+
+    def link_field(self, obj):
+        return mark_safe('<a href="{url}" target="_blank">{url}</a>'. format(
+            url=obj.link
+        ))
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.created_by = request.user
+        obj.updated_by = request.user
+        obj.save()
+
 
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Review, ReviewAdmin)
+admin.site.register(Slider, SliderAdmin)

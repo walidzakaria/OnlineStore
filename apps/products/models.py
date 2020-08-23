@@ -64,7 +64,6 @@ class Product(AbstractTableMeta, models.Model):
     # image4 = models.ImageField(upload_to='products/', null=True, blank=True)
     # image5 = models.ImageField(upload_to='products/', null=True, blank=True)
     active = models.BooleanField(default=True)
-    slider = models.BooleanField(default=False)
     purchased = models.PositiveIntegerField(default=0)
     sold = models.PositiveIntegerField(default=0)
     balance = models.IntegerField(default=0)
@@ -141,3 +140,17 @@ class Review(AbstractTableMeta, models.Model):
 
     class Meta:
         ordering = ['-id']
+
+
+class Slider(AbstractTableMeta, models.Model):
+    name = models.CharField(max_length=255, blank=False, verbose_name='Slider')
+    ## For demo development
+    image = CloudinaryField('image', blank=True, null=True)
+
+    ## For production development
+    # image = models.ImageField(upload_to='products/', null=True, blank=True)
+    link = models.CharField(max_length=255)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.link})"

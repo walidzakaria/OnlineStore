@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 
-from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer
-from .models import Brand, Category, SubCategory, Product
+from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer, SliderSerializer
+from .models import Brand, Category, SubCategory, Product, Slider
 from ..currencies.models import Currency
 
 
@@ -43,22 +43,18 @@ def sub_category_list(request, lang):
 
 
 @api_view(['GET', ])
-def slider_product_list(request, currency_id, lang):
+def slider_product_list(request):
     """
-    List the slider products
+    List the sliders
     """
     if request.method == 'GET':
-        slider_products = Product.objects.filter(slider=True).all()
-        serializer = ProductSerializer(slider_products, many=True,
-                                       context={
-                                           'lang': lang,
-                                           'curr': currency_id
-                                       })
+        sliders = Slider.objects.filter(active=True).all()
+        serializer = SliderSerializer(sliders, many=True)
         return Response(serializer.data)
 
 
 @api_view(['GET', ])
-def subcategory_product_list(request, lang, currency_id, subcategory_id):
+def subcategory_product_list(request, subcategory_id, currency_id, lang):
     """
     List the the products filtered by a sub-category in paginated view
     """

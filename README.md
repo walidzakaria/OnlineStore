@@ -114,38 +114,21 @@ response:
 ]
 ```
 
-#### GET /products/slider/{currency_id}/{language}
+#### GET /products/slider
 - General:
-    - Retrieves the products that are set by the admin to show on the slider.
-    - currency_id parameter defines the exchanged product price.
-    - ar/en language parameters are set for the product name and description.
+    - Retrieves the sliders that are set by the admin to show on the slider.
+    - Each slider contains a link which could lead to anywhere in the app.
 - Sample:
 ```commandline
-https://mystore9.herokuapp.com/products/slider/1/en 
+https://mystore9.herokuapp.com/products/slider 
 ```
 response:
 ```json
 [
     {
-        "id": 9,
-        "brand_name": "Samsung",
-        "sub_category": {
-            "id": 5,
-            "category_name": "Electronics",
-            "name": "Mobiles",
-            "name_ar": "",
-            "category": 2
-        },
-        "product_name": "s20 ultra",
-        "price1": "10.00",
-        "price2": "9.00",
-        "product_description": "",
-        "image1": "/media/products/s11_ultra.jpg",
-        "image2": null,
-        "image3": null,
-        "image4": null,
-        "image5": null,
-        "brand": 2
+        "name": "eid festival",
+        "image": "image/upload/v1598224440/z69jic0x7krl15lntekr.jpg",
+        "link": "http://127.0.0.1:8000/admin/products/slider/add/"
     }
 ]
 ```

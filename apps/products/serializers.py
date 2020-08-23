@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.currencies.models import Currency
-from apps.products.models import Category, SubCategory, Product
+from apps.products.models import Category, SubCategory, Product, Slider
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -54,3 +54,11 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('id', 'brand_name', 'sub_category', 'product_name', 'price1', 'price2', 'product_description',
                   'image1', 'image2', 'image3', 'image4', 'image5', 'brand',)
+
+
+class SliderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Slider
+        fields = ('name', 'image', 'link', )
+
