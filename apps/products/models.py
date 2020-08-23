@@ -150,6 +150,12 @@ class Slider(AbstractTableMeta, models.Model):
     ## For production development
     # image = models.ImageField(upload_to='products/', null=True, blank=True)
     link = models.CharField(max_length=255)
+    LANG = (
+        ('en', 'EN'),
+        ('ar', 'AR'),
+        ('both', 'Both'),
+    )
+    lang = models.CharField(max_length=4, choices=LANG, default='both')
     active = models.BooleanField(default=True)
 
     def __str__(self):

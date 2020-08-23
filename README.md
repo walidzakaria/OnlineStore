@@ -114,13 +114,15 @@ response:
 ]
 ```
 
-#### GET /products/slider
+#### GET /products/slider/{lang}
 - General:
     - Retrieves the sliders that are set by the admin to show on the slider.
     - Each slider contains a link which could lead to anywhere in the app.
+    - lang parameters filters only the sliders that are assigned against a certain language.
+    - Sliders set with lang="both" shows in both languages. 
 - Sample:
 ```commandline
-https://mystore9.herokuapp.com/products/slider 
+https://mystore9.herokuapp.com/products/slider/en 
 ```
 response:
 ```json

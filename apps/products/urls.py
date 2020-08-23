@@ -3,7 +3,7 @@ from django.urls import path, include
 
 from rest_framework import routers
 from .views import (
-    category_list, sub_category_list, slider_product_list,
+    category_list, sub_category_list, slider_list,
     subcategory_product_list, category_product_list, trending_product_list,
     best_selling_product_list, ApiProductList
 )
@@ -17,7 +17,7 @@ from .views import (
 urlpatterns = [
     path('categories/<str:lang>', category_list, name="category-list"),
     path('subcategories/<str:lang>', sub_category_list, name="sub_category-list"),
-    path('slider', slider_product_list, name="slider-list"),
+    path('slider/<str:lang>', slider_list, name="slider-list"),
     path('subcategories/<int:subcategory_id>/<int:currency_id>/<str:lang>',
          subcategory_product_list, name="subcategory-product-list"),
     path('categories/<int:category_id>/<int:currency_id>/<str:lang>',

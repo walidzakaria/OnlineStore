@@ -164,14 +164,14 @@ class ReviewAdmin(admin.ModelAdmin):
 
 class SliderAdmin(admin.ModelAdmin):
     form = SliderForm
-    list_display = ('name', 'link_field', 'updated_by', 'updated_at', 'active')
+    list_display = ('name', 'link_field', 'updated_by', 'updated_at', 'lang', 'active')
     readonly_fields = ('updated_by', 'updated_at', 'created_by', 'created_at',
                        'preview_image', 'link_field',)
     search_fields = ('name',)
-    list_filter = ('active', )
+    list_filter = ('active', 'lang', )
     fieldsets = ((
                      None, {
-                         'fields': ('name', 'image', 'preview_image', 'link', 'link_field', 'active',)
+                         'fields': ('name', 'image', 'preview_image', 'link', 'link_field', 'lang', 'active',)
                      }), (
                      'Other Information', {
                          'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),

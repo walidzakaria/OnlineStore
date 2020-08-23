@@ -8,6 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
+from django.db.models import Q
 
 from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer, SliderSerializer
 from .models import Brand, Category, SubCategory, Product, Slider
@@ -43,12 +44,13 @@ def sub_category_list(request, lang):
 
 
 @api_view(['GET', ])
-def slider_product_list(request):
+def slider_list(request, lang):
     """
     List the sliders
     """
     if request.method == 'GET':
-        sliders = Slider.objects.filter(active=True).all()
+        sliders = Slider.objects.filter(active=True).\
+            filter(Q(lang='both') | Q(lang=lang)).all()
         serializer = SliderSerializer(sliders, many=True)
         return Response(serializer.data)
 
