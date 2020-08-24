@@ -116,6 +116,21 @@ def best_selling_product_list(request, currency_id, lang):
         return paginator.get_paginated_response(serializer.data)
 
 
+@api_view(['GET', ])
+def product_details(request, product_id, currency_id, lang):
+    """
+    Shows a selected products details
+    """
+    if request.method == 'GET':
+        product = Product.objects.filter(id=product_id).first()
+
+        if not product:
+            return Response(data={"message": "product not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ProductSerializer(product, many=False, context={'lang': lang, 'curr': currency_id})
+        return Response(serializer.data)
+
+
 class ApiProductList(ListAPIView):
     serializer_class = ProductSerializer
     # queryset = Product.objects.all()

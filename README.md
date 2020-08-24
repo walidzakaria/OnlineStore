@@ -380,4 +380,38 @@ response:
 }
 ```
 
+#### GET /products/{product_id}/{currency_id}/{lang}
+- General:
+    - Retrieves a selected product details.
+    - currency_id parameter defines the exchanged product price.
+    - ar/en language parameters are set for the product name and description.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/1/en 
+```
+response:
+```json
+{
+    "id": 1,
+    "brand_name": "Infinix",
+    "sub_category": {
+        "id": 1,
+        "category_name": "Electronics",
+        "name": "Mobiles",
+        "name_ar": "aaaa",
+        "category": 1
+    },
+    "product_name": "test product",
+    "price1": 10.0,
+    "price2": 20.0,
+    "product_description": "this is description",
+    "image1": null,
+    "image2": null,
+    "image3": null,
+    "image4": null,
+    "image5": null,
+    "brand": 1
+}
+```
+
 to be continued...
