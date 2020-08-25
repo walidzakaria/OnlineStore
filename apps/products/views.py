@@ -62,7 +62,7 @@ def subcategory_product_list(request, subcategory_id, currency_id, lang):
     """
     if request.method == 'GET':
         paginator = PageNumberPagination()
-        paginator.page_size = 2
+        paginator.page_size = 10
 
         currency = Currency.objects.filter(id=currency_id).first()
         if not currency:
@@ -81,7 +81,7 @@ def category_product_list(request, category_id, currency_id, lang):
     """
     if request.method == 'GET':
         paginator = PageNumberPagination()
-        paginator.page_size = 4
+        paginator.page_size = 10
         category_products = Product.objects.filter(sub_category__category=category_id).all()
         result_page = paginator.paginate_queryset(category_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
@@ -95,7 +95,7 @@ def trending_product_list(request, currency_id, lang):
     """
     if request.method == 'GET':
         paginator = PageNumberPagination()
-        paginator.page_size = 4
+        paginator.page_size = 10
         trending_products = Product.objects.filter(balance__gt=0).all().order_by('-sold')
         result_page = paginator.paginate_queryset(trending_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
@@ -109,7 +109,7 @@ def best_selling_product_list(request, currency_id, lang):
     """
     if request.method == 'GET':
         paginator = PageNumberPagination()
-        paginator.page_size = 4
+        paginator.page_size = 10
         best_selling_products = Product.objects.filter(balance__gt=0).all().order_by('-reduction')
         result_page = paginator.paginate_queryset(best_selling_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
