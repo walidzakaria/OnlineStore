@@ -49,7 +49,7 @@ def slider_list(request, lang):
     List the sliders
     """
     if request.method == 'GET':
-        sliders = Slider.objects.filter(active=True).\
+        sliders = Slider.objects.filter(active=True). \
             filter(Q(lang='both') | Q(lang=lang)).all()
         serializer = SliderSerializer(sliders, many=True)
         return Response(serializer.data)
@@ -133,6 +133,7 @@ def product_details(request, product_id, currency_id, lang):
 
 class ApiProductList(ListAPIView):
     serializer_class = ProductSerializer
+
     # queryset = Product.objects.all()
 
     def get_queryset(self):
@@ -148,13 +149,78 @@ class ApiProductList(ListAPIView):
                      'sub_category__category__name', 'sub_category__category__name_ar',
                      'description',)
 
-# class ApiProductList(ListAPIView):
-#
-#     # authentication_classes = (TokenAuthentication, )
-#     # permission_classes = (IsAuthenticated, )
-#     pagination_class = PageNumberPagination
-#
-#     def get(self, request):
-#         queryset = Product.objects.all()
-#         serializer_class = ProductSerializer
-#         return Response(serializer_class)
+
+@api_view(['GET', ])
+def auto_suggestion(request, search_pattern):
+    """
+    Provides auto suggestion list based on the input search pattern
+    """
+    if request.method == 'GET':
+        result = get_suggested_items(search_pattern)
+        result = set_bold_suggestion(result, search_pattern)
+
+        if len(result) == 0:
+            return Response(data={"message": "suggestions not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(result)
+
+
+def get_suggested_items(search_pattern):
+    result = []
+    required_items = 10
+    search_pattern = search_pattern.lower()
+    products = Product.objects.filter(
+        Q(name__icontains=search_pattern) | Q(name_ar__icontains=search_pattern)
+    ).all()[:required_items]
+
+    for i in products:
+        if search_pattern in i.name.lower():
+            result.append(i.name)
+        else:
+            result.append(i.name_ar)
+
+    required_items -= len(result)
+    if required_items != 0:
+        subcategories = SubCategory.objects.filter(
+            Q(name__icontains=search_pattern) | Q(name_ar__icontains=search_pattern)
+        ).all()[:required_items]
+
+        for i in subcategories:
+            if search_pattern in i.name.lower():
+                result.append(i.name)
+            else:
+                result.append(i.name_ar)
+
+    required_items -= len(result)
+    if required_items != 0:
+        categories = Category.objects.filter(
+            Q(name__icontains=search_pattern) | Q(name_ar__icontains=search_pattern)
+        ).all()[:required_items]
+
+        for i in categories:
+            if search_pattern in i.name.lower():
+                result.append(i.name)
+            else:
+                result.append(i.name_ar)
+
+    if required_items != 0:
+        brands = Brand.objects.filter(
+            Q(name__icontains=search_pattern) | Q(name_ar__icontains=search_pattern)
+        ).all()[:required_items]
+
+        for i in brands:
+            if search_pattern in i.name.lower():
+                result.append(i.name)
+            else:
+                result.append(i.name_ar)
+
+    return result
+
+
+def set_bold_suggestion(input_list, search_pattern):
+    for i in range(0, len(input_list)):
+        element_name = input_list[i].lower()
+        search_pattern = search_pattern.lower()
+        element_name = element_name.replace(search_pattern, f'<b>{search_pattern}</b>')
+        input_list[i] = element_name
+    return input_list
