@@ -40,7 +40,7 @@ class ProductAdmin(admin.ModelAdmin):
     form = ProductForm
 
     list_display = ('id', 'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1',
-                    'price2', 'updated_by', 'updated_at',
+                    'price2', 'delivery_days', 'updated_by', 'updated_at',
                     'purchased', 'sold', 'balance', 'number_of_reviews', 'rating_average',
                     'active',)
     # prepopulated_fields = {'slug': ['title']}
@@ -50,8 +50,9 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = ((
                      None, {
                          'fields': (
-                             'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2', 'description',
-                             'description_ar', 'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
+                             'name', 'name_ar', 'keywords', 'brand', 'sub_category', 'price1', 'price2',
+                             'delivery_days', 'description', 'description_ar',
+                             'image1', 'image2', 'image3', 'image4', 'image5', 'preview_image1',
                              'preview_image2', 'preview_image3', 'preview_image4', 'preview_image5',
                              'active',)
                      }), (

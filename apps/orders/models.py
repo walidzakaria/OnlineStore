@@ -1,7 +1,8 @@
+import datetime
 from datetime import date
 
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Max
 import pyzt
 from django.utils import timezone
 
@@ -46,12 +47,25 @@ class Purchase(AbstractTableMeta, models.Model):
         ordering: ['-id']
 
 
+class Shipping(models.Model):
+    city = models.CharField(max_length=100, unique=True)
+    city_ar = models.CharField(max_length=100, unique=True)
+    shipping_fees = models.DecimalField(decimal_places=2, max_digits=17)
+
+    def __str__(self):
+        return f'{self.city}'
+
+    class Meta:
+        ordering: ['city']
+
+
 class UserAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    city = models.ForeignKey(Shipping, on_delete=models.DO_NOTHING)
     address = models.CharField(max_length=300)
 
     def __str__(self):
-        return f'{self.user}: {self.address}'
+        return f'{self.city.city}, {self.address}'
 
     class Meta:
         verbose_name = 'User Address'
@@ -74,10 +88,13 @@ class Order(AbstractTableMeta, models.Model):
     notes = models.TextField(blank=True, null=True, default='')
     # To be auto calculated
     number_of_items = models.PositiveIntegerField(default=0)
+    shipping_fees = models.DecimalField(max_digits=17, decimal_places=2, default=0)
+    total = models.DecimalField(max_digits=17, decimal_places=2, default=0)
     due_amount = models.DecimalField(max_digits=17, decimal_places=2, default=0)
     currency = models.ForeignKey(Currency, on_delete=models.DO_NOTHING)
     exchange_rate = models.DecimalField(max_digits=17, decimal_places=4, default=0)
     exchanged_due_amount = models.DecimalField(max_digits=17, decimal_places=2, default=0)
+    due_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.id}: {self.status}'
@@ -89,13 +106,24 @@ class Order(AbstractTableMeta, models.Model):
         else:
             self.number_of_items = number_of_items
 
-        due_amount = OrderItems.objects.filter(
+        total = OrderItems.objects.filter(
             order=self.id).aggregate(
             Sum('product_value'))['product_value__sum']
-        if due_amount is None:
-            self.due_amount = 0
+        if total is None:
+            self.total = 0
         else:
-            self.due_amount = due_amount
+            self.total = total
+
+        delivery_days = OrderItems.objects.filter(
+            order=self.id).aggregate(Max('product__delivery_days'))['product__delivery_days__max']
+        due_date = timezone.now()
+        if delivery_days:
+            self.due_date = due_date + datetime.timedelta(days=delivery_days)
+        else:
+            self.due_date = None
+
+        self.shipping_fees = self.user_address.city.shipping_fees
+        self.due_amount = self.total + self.shipping_fees
         exchange_date = self.created_at
         if not exchange_date:
             exchange_date = timezone.now()

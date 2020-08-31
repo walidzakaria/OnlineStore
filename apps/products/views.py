@@ -1,3 +1,5 @@
+# encoding=utf-8
+
 from requests import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action, api_view
@@ -64,8 +66,7 @@ def subcategory_product_list(request, subcategory_id, currency_id, lang):
         paginator = PageNumberPagination()
         paginator.page_size = 10
 
-        currency = Currency.objects.filter(id=currency_id).first()
-        if not currency:
+        if not Currency.exists(currency_id):
             return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
 
         subcategory_products = Product.objects.filter(sub_category=subcategory_id).all()
@@ -80,6 +81,9 @@ def category_product_list(request, category_id, currency_id, lang):
     List the the products filtered by a category in paginated view
     """
     if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
         paginator = PageNumberPagination()
         paginator.page_size = 10
         category_products = Product.objects.filter(sub_category__category=category_id).all()
@@ -94,6 +98,9 @@ def trending_product_list(request, currency_id, lang):
     List the the trending products filtered by a category in paginated view
     """
     if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
         paginator = PageNumberPagination()
         paginator.page_size = 10
         trending_products = Product.objects.filter(balance__gt=0).all().order_by('-sold')
@@ -108,6 +115,9 @@ def best_selling_product_list(request, currency_id, lang):
     List the the best selling products filtered by a category in paginated view
     """
     if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
         paginator = PageNumberPagination()
         paginator.page_size = 10
         best_selling_products = Product.objects.filter(balance__gt=0).all().order_by('-reduction')
@@ -122,6 +132,9 @@ def product_details(request, product_id, currency_id, lang):
     Shows a selected products details
     """
     if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
         product = Product.objects.filter(id=product_id).first()
 
         if not product:
@@ -133,8 +146,6 @@ def product_details(request, product_id, currency_id, lang):
 
 class ApiProductList(ListAPIView):
     serializer_class = ProductSerializer
-
-    # queryset = Product.objects.all()
 
     def get_queryset(self):
         lang = self.kwargs.get('lang')
@@ -156,6 +167,7 @@ def auto_suggestion(request, search_pattern):
     Provides auto suggestion list based on the input search pattern
     """
     if request.method == 'GET':
+        search_pattern = u'%s' %search_pattern
         result = get_suggested_items(search_pattern)
         result = set_bold_suggestion(result, search_pattern)
 

@@ -52,8 +52,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('id', 'brand_name', 'sub_category', 'product_name', 'price1', 'price2', 'product_description',
-                  'image1', 'image2', 'image3', 'image4', 'image5', 'brand',)
+        fields = ('id', 'brand_name', 'sub_category', 'product_name', 'price1', 'price2', 'delivery_days',
+                  'product_description', 'image1', 'image2', 'image3', 'image4', 'image5', 'brand',)
 
 
 class SliderSerializer(serializers.ModelSerializer):

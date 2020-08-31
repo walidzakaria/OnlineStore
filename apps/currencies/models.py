@@ -1,4 +1,6 @@
 from django.db import models
+from rest_framework import status
+from rest_framework.response import Response
 
 from apps.utils.models import AbstractTableMeta
 
@@ -11,7 +13,7 @@ class Currency(models.Model):
     rate = models.DecimalField(max_digits=14, decimal_places=4,default=0)
 
     def __str__(self):
-        return f'{self.currency}, {self.code}'
+        return f'{self.code}'
 
     def calculate(self):
         last_rate = ExchangeRate.objects.filter(currency=self.id)\
@@ -23,6 +25,15 @@ class Currency(models.Model):
         ordering = ['id']
         verbose_name = 'Currency'
         verbose_name_plural = 'Currencies'
+
+    @staticmethod
+    def exists(currency_id):
+        """
+        checks if a currency exists with this id
+        """
+        currency = Currency.objects.filter(id=currency_id).first()
+        return currency is not None
+
 
 
 class ExchangeRate(AbstractTableMeta, models.Model):

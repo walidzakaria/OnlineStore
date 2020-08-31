@@ -5,16 +5,59 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from drf_multiple_model.views import ObjectMultipleModelAPIView
 
-from .models import UserAddress, Order
-from .serializers import UserAddressSerializer, OrderSerializer, OrderItemsSerializer
+from .models import UserAddress, Order, Shipping
+from .serializers import UserAddressSerializer, OrderSerializer, OrderItemsSerializer, ShippingSerializer
+from ..currencies.models import Currency
 from ..products.models import Category
+
+
+@api_view(['GET', ])
+def shipping_list(request, currency_id, lang):
+    """
+    List shipping details based on given lang & curr
+    """
+    if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        if lang == 'en':
+            shipping = Shipping.objects.order_by('city').all()
+        else:
+            shipping = Shipping.objects.order_by('city_ar').all()
+
+        serializer = ShippingSerializer(shipping,
+                                        context={'lang': lang, 'curr': currency_id},
+                                        many=True)
+
+        return Response(serializer.data)
+
+
+@api_view(['GET', ])
+def shipping_detail(request, city_id, currency_id, lang):
+    """
+    List shipping details based on given lang & curr
+    """
+    if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        shipping = Shipping.objects.filter(id=city_id).first()
+
+        if not shipping:
+            return Response(data={"message": "city doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ShippingSerializer(shipping,
+                                        context={'lang': lang, 'curr': currency_id},
+                                        many=False)
+
+        return Response(serializer.data)
 
 
 @api_view(['GET', 'POST', ])
 @permission_classes([IsAuthenticated])
 def user_address_list(request):
     """
-    List all logged user addresses or create a new address
+    List logged user addresses or create a new address
     """
     if request.method == 'GET':
         user = request.user
@@ -44,10 +87,11 @@ def user_address_detail(request, pk):
     try:
         user_address = UserAddress.objects.get(pk=pk)
     except UserAddress.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(data={"message": "no address found with this id"}, status=status.HTTP_404_NOT_FOUND)
 
     if user_address.user != request.user:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        return Response(data={"message": "invalid user to update this address"},
+                        status=status.HTTP_401_UNAUTHORIZED)
 
     if request.method == 'PUT':
         user = request.user
@@ -60,7 +104,7 @@ def user_address_detail(request, pk):
 
     elif request.method == 'DELETE':
         user_address.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(data={"message": "deleted"}, status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET', 'POST', ])

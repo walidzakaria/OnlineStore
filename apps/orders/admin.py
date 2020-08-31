@@ -1,12 +1,14 @@
+from datetime import datetime, date
+
+from django.utils import timezone
+
 from django.contrib import admin
-from django.db.models import Sum
 
 from .forms import PurchaseForm, OrderForm, OrderItemsForm
-from apps.currencies.models import ExchangeRate
 
 
 # Register your models here.
-from .models import Purchase, Order, UserAddress, OrderItems
+from .models import Purchase, Order, UserAddress, OrderItems, Shipping
 from ..products.models import Product
 
 
@@ -53,24 +55,37 @@ class PurchaseAdmin(admin.ModelAdmin):
 
 
 class UserAddressAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'address',)
+    list_display = ('id', 'user', 'city', 'address',)
 
 
 class OrderAdmin(admin.ModelAdmin):
     form = OrderForm
     list_display = ('id', 'client', 'status', 'user_address', 'notes', 'number_of_items',
-                    'due_amount', 'exchanged_due_amount', 'currency',)
-    readonly_fields = ('number_of_items', 'due_amount', 'created_by', 'created_at',
-                       'updated_by', 'updated_at', 'exchange_rate', 'exchanged_due_amount',)
+                    'total', 'shipping_fees', 'due_amount', 'exchanged_due_amount',
+                    'due_date', 'get_due_in', 'currency',)
+    readonly_fields = ('number_of_items', 'total', 'created_by', 'created_at',
+                       'updated_by', 'updated_at', 'shipping_fees', 'due_amount',
+                       'exchange_rate', 'exchanged_due_amount', 'due_date', 'get_due_in',)
     fieldsets = (
-        (None, {'fields': ('client', 'status', 'user_address', 'number_of_items', 'due_amount',
+        (None, {'fields': ('client', 'status', 'user_address', 'number_of_items', 'total', 'shipping_fees',
+                           'due_amount', 'due_date', 'get_due_in',
                            'currency', 'exchange_rate', 'exchanged_due_amount', 'notes')}),
         ('Other Information', {
             'fields': ('created_by', 'created_at', 'updated_by', 'updated_at',),
             'classes': ('collapse',)
         }))
     search_fields = ('id',)
-    # list_filter = ('client',)
+    list_filter = ('status',)
+
+    def get_due_in(self, obj):
+        if obj.status in ['Preparation', 'Delivery'] and obj.due_date:
+            due_date = obj.due_date - timezone.now().date()
+            return due_date.days
+        else:
+            return None
+
+    get_due_in.admin_order_field = 'due_in'
+    get_due_in.short_description = 'Due In'
 
     def save_model(self, request, obj, form, change):
         if not change:
@@ -139,7 +154,13 @@ class OrderItemsAdmin(admin.ModelAdmin):
     delete_selection.short_description = 'Delete selected order items'
 
 
+class ShippingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'city', 'city_ar', 'shipping_fees',)
+    search_fields = ('city', 'city_ar',)
+
+
 admin.site.register(Purchase, PurchaseAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(UserAddress, UserAddressAdmin)
 admin.site.register(OrderItems, OrderItemsAdmin)
+admin.site.register(Shipping, ShippingAdmin)

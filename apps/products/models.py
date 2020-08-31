@@ -69,6 +69,7 @@ class Product(AbstractTableMeta, models.Model):
     balance = models.IntegerField(default=0)
     rating_average = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True, default=5.00)
     number_of_reviews = models.PositiveIntegerField(default=0)
+    delivery_days = models.IntegerField(default=1)
 
     def save(self, *args, **kwargs):
         self.calculate()
