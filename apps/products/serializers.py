@@ -28,14 +28,14 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_product_name(self, obj):
         lang = self.context.get("lang")
-        if lang == 'en':
+        if lang == 'en' or obj.name_ar == '':
             return obj.name
         else:
             return obj.name_ar
 
     def get_product_description(self, obj):
         lang = self.context.get("lang")
-        if lang == 'en':
+        if lang == 'en' or obj.description_ar == '':
             return obj.description
         else:
             return obj.description_ar

@@ -116,7 +116,7 @@ class Order(AbstractTableMeta, models.Model):
 
         delivery_days = OrderItems.objects.filter(
             order=self.id).aggregate(Max('product__delivery_days'))['product__delivery_days__max']
-        due_date = timezone.now()
+        due_date = timezone.now().date()
         if delivery_days:
             self.due_date = due_date + datetime.timedelta(days=delivery_days)
         else:

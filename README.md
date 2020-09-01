@@ -414,4 +414,331 @@ response:
 }
 ```
 
+#### GET /orders/shipping/{currency_id}/{lang}
+- General:
+    - Retrieves shipping cities with shipping fees.
+    - currency_id parameter defines the exchanged shipping rate.
+    - ar/en language parameters are set for the city name and sorting.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/shipping/2/ar 
+```
+response:
+```json
+[
+    {
+        "id": 1,
+        "city_name": "الغردقة",
+        "fees": 375.0
+    },
+    {
+        "id": 2,
+        "city_name": "القاهرة",
+        "fees": 660.0
+    }
+]
+```
+#### GET /orders/shipping/{currency_id}/{shipping_id}/{lang}
+- General:
+    - Retrieves a single shipping city with shipping fees based on id.
+    - currency_id parameter defines the exchanged shipping rate.
+    - ar/en language parameters are set for the city name and sorting.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/shipping/2/2/ar 
+```
+response:
+```json
+{
+    "id": 2,
+    "city_name": "القاهرة",
+    "fees": 660.0
+}
+```
+#### GET /orders/user-addresses/
+- General:
+    - Requires authentication.
+    - Retrieves a logged user shipping addresses.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-addresses/ 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+response:
+```json
+[
+    {
+        "id": 1,
+        "address": "this place",
+        "user": 1,
+        "city": 1
+    },
+    {
+        "id": 6,
+        "address": "cairo - in this place.",
+        "user": 1,
+        "city": 1
+    }
+]
+```
+#### POST /orders/user-addresses/
+- General:
+    - Requires authentication.
+    - Creates a new shipping address against the logged user.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-addresses/ 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+body:
+```json
+{
+    "address": "new address",
+    "city": 1
+}
+```
+response:
+```json
+{
+    "id": 9,
+    "address": "new address",
+    "user": 1,
+    "city": 1
+}
+```
+#### PUT /orders/user-addresses/{address_id}
+- General:
+    - Requires authentication.
+    - Updates a shipping address against the logged user and address_id
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-addresses/7 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+body:
+```json
+{
+    "address": "new address updates",
+    "city": 2
+}
+```
+response:
+```json
+{
+    "id": 7,
+    "address": "new address updates",
+    "user": 1,
+    "city": 2
+}
+```
+#### DELETE /orders/user-addresses/{address_id}
+- General:
+    - Requires authentication.
+    - Deletes a shipping address against the logged user and address_id
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-addresses/7 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+
+response:
+```json
+{
+    "message": "deleted"
+}
+```
+#### GET orders/user-orders/
+- General:
+    - Requires authentication.
+    - Retrieves all user previous order headers & count.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-orders/ 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+
+response:
+```json
+{
+    "count": 4,
+    "data": [
+        {
+            "id": 10049,
+            "currency_code": "EGP",
+            "user_city": "Hurghada",
+            "user_address": "this place",
+            "due_days": 1,
+            "created_at": "2020-09-01T20:37:13.235039Z",
+            "updated_at": "2020-09-01T20:37:13.651690Z",
+            "status": "Preparation",
+            "notes": "some notes",
+            "number_of_items": 5,
+            "shipping_fees": "25.00",
+            "total": "5648.00",
+            "due_amount": "5673.00",
+            "exchange_rate": "15.0000",
+            "exchanged_due_amount": "85095.00",
+            "due_date": "2020-09-02",
+            "created_by": 1,
+            "updated_by": 1,
+            "client": 1,
+            "currency": 2
+        }
+    ]
+}
+```
+#### POST /orders/user-order-create/
+- General:
+    - Requires authentication.
+    - Creates a new order against the logged user.
+    - Prices & exchange rates are internally retrieved from server side.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-order-create/ 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+body:
+```json
+[
+    {
+        "notes": "some notes",
+        "user_address": 1,
+        "currency": 2
+    },
+    [
+         {
+             "product": 1,
+             "quantity": 2
+         },
+         {
+             "product": 2,
+             "quantity": 3              
+          }
+    ]
+]
+```
+response:
+```json
+{
+    "id": 10051,
+    "created_at": "2020-09-01T23:12:43.857815Z",
+    "updated_at": "2020-09-01T23:12:44.271559Z",
+    "status": "Preparation",
+    "notes": "some notes",
+    "number_of_items": 5,
+    "shipping_fees": "44.00",
+    "total": "5648.00",
+    "due_amount": "5692.00",
+    "exchange_rate": "15.0000",
+    "exchanged_due_amount": "85380.00",
+    "due_date": "2020-09-02",
+    "created_by": 27,
+    "updated_by": 27,
+    "client": 27,
+    "user_address": 7,
+    "currency": 2
+}
+```
+#### GET orders/user-orders/{order_id}/lang
+- General:
+    - Requires authentication.
+    - Retrieved an order with detailed products against the logged user and order id.
+    - Products show according to the lang in parameters.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/orders/user-orders/10050/en 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+response:
+```json
+{
+    "order_header": {
+        "id": 10050,
+        "currency_code": "USD",
+        "user_city": "Hurghada",
+        "user_address": "this place",
+        "due_days": 1,
+        "created_at": "2020-09-01T20:39:09.702733Z",
+        "updated_at": "2020-09-01T20:39:10.062512Z",
+        "status": "Preparation",
+        "notes": "some notes",
+        "number_of_items": 5,
+        "shipping_fees": "25.00",
+        "total": "5648.00",
+        "due_amount": "5673.00",
+        "exchange_rate": "1.0000",
+        "exchanged_due_amount": "5673.00",
+        "due_date": "2020-09-02",
+        "created_by": 1,
+        "updated_by": 1,
+        "client": 1,
+        "currency": 1
+    },
+    "order_items": [
+        {
+            "id": 54,
+            "product": {
+                "id": 1,
+                "brand_name": "Infinix",
+                "sub_category": {
+                    "id": 1,
+                    "category_name": "Electronics",
+                    "name": "Mobiles",
+                    "name_ar": "aaaa",
+                    "category": 1
+                },
+                "product_name": "test product",
+                "price1": 10.0,
+                "price2": 20.0,
+                "delivery_days": 1,
+                "product_description": "this is description",
+                "image1": null,
+                "image2": null,
+                "image3": null,
+                "image4": null,
+                "image5": null,
+                "brand": 1
+            },
+            "quantity": 2,
+            "product_value": "20.00",
+            "order": 10050
+        }
+    ]
+}
+```
 to be continued...

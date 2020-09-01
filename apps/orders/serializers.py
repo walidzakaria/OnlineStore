@@ -1,39 +1,10 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from .models import UserAddress, Order, OrderItems, Shipping
 from ..currencies.models import Currency
-
-
-class UserAddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserAddress
-        fields = '__all__'
-
-
-class OrderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = '__all__'
-
-
-class OrderItemsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrderItems
-        fields = '__all__'
-
-
-class TestSerializer(serializers.ModelSerializer):
-    order = OrderItemsSerializer()
-
-    class Meta:
-        model = OrderItems
-        fields = '__all__'
-
-    def create(self, validated_data):
-        profile_data = validated_data.pop('order')
-        new_order = Order.objects.create(**validated_data)
-        OrderItems.objects.create(order=new_order, **profile_data)
-        return new_order
+from ..currencies.serializers import CurrencySerializer
+from ..products.serializers import ProductSerializer
 
 
 class ShippingSerializer(serializers.ModelSerializer):
@@ -55,3 +26,48 @@ class ShippingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shipping
         fields = ('id', 'city_name', 'fees', )
+
+
+class UserAddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAddress
+        fields = '__all__'
+
+
+class GetOrderSerializer(serializers.ModelSerializer):
+    currency_code = serializers.CharField(read_only=True, source='currency.code')
+    user_city = serializers.CharField(read_only=True, source='user_address.city.city')
+    user_address = serializers.CharField(read_only=True, source='user_address.address')
+    due_days = serializers.SerializerMethodField('get_due_days')
+
+    def get_due_days(self, obj):
+        if obj.status in ['Preparation', 'Delivery'] and obj.due_date:
+            due_date = obj.due_date - timezone.now().date()
+            return due_date.days
+        else:
+            return None
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+class OrderItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItems
+        fields = '__all__'
+
+
+class OrderDetailedSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
+    class Meta:
+        model = OrderItems
+        fields = '__all__'
