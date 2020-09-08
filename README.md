@@ -370,30 +370,31 @@ https://mystore9.herokuapp.com/products/new-arrival/1/en
 response:
 ```json
 {
-    "count": 3,
+    "count": 9,
     "next": null,
     "previous": null,
     "results": [
         {
-            "id": 1,
-            "brand_name": "Infinix",
+            "id": 10,
+            "brand_name": "Adidas",
             "sub_category": {
-                "id": 1,
-                "category_name": "Electronics",
-                "name": "Mobiles",
-                "name_ar": "aaaa",
+                "id": 8,
+                "category_name": "Accessories",
+                "name": "watch",
+                "name_ar": "ساعات",
                 "category": 1
             },
-            "product_name": "test product",
-            "price1": 10.0,
-            "price2": 20.0,
-            "product_description": "this is description",
-            "image1": null,
+            "product_name": "District L1",
+            "price1": 50.0,
+            "price2": 0.0,
+            "delivery_days": 1,
+            "product_description": "",
+            "image1": "image/upload/v1598131549/gqp6gdinsy9wfr4pdqz4.jpg",
             "image2": null,
             "image3": null,
             "image4": null,
             "image5": null,
-            "brand": 1
+            "brand": 6
         }
     ]
 }
