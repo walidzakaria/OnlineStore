@@ -63,6 +63,24 @@ response:
     "auth_token": "c14f6f9b56a76222c947465dff1a8a9752abd16f"
 }
 ```
+
+#### POST /auth/token/logout
+- General:
+    - Logout the valid user by destroying the valid token.
+    
+- Sample:
+```commandline
+POST https://mystore9.herokuapp.com/auth/token/logout 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+response has no content with status 204.
+
+
 #### GET /products/categories/{language}
 - General:
     - Retrieves all main categories (id, English name, and Arabic name).
@@ -387,7 +405,7 @@ response:
     - ar/en language parameters are set for the product name and description.
 - Sample:
 ```commandline
-https://mystore9.herokuapp.com/products/1/en 
+https://mystore9.herokuapp.com/products/10/1/en/ 
 ```
 response:
 ```json
