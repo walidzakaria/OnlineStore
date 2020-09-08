@@ -355,6 +355,51 @@ response:
 }
 ```
 
+
+#### GET /products/new-arrival/{currency_id}/{language}
+- General:
+    - Retrieves all the products ordered recent purchases.
+    - Products retrieved are only the ones that still in the stock.
+    - currency_id parameter defines the exchanged product price.
+    - ar/en language parameters are set for the product name and description.
+    - Retrieved data is paginated.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/new-arrival/1/en 
+```
+response:
+```json
+{
+    "count": 3,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "brand_name": "Infinix",
+            "sub_category": {
+                "id": 1,
+                "category_name": "Electronics",
+                "name": "Mobiles",
+                "name_ar": "aaaa",
+                "category": 1
+            },
+            "product_name": "test product",
+            "price1": 10.0,
+            "price2": 20.0,
+            "product_description": "this is description",
+            "image1": null,
+            "image2": null,
+            "image3": null,
+            "image4": null,
+            "image5": null,
+            "brand": 1
+        }
+    ]
+}
+```
+
+
 #### GET /products/search/{currency_id}/{lang}/?search={search_pattern}
 - General:
     - Retrieves all the products matching the search parameters.

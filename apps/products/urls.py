@@ -5,7 +5,8 @@ from rest_framework import routers
 from .views import (
     category_list, sub_category_list, slider_list,
     subcategory_product_list, category_product_list, trending_product_list,
-    best_selling_product_list, ApiProductList, product_details, auto_suggestion
+    best_selling_product_list, ApiProductList, product_details, auto_suggestion,
+    new_arrival_product_list
 )
 
 # router = routers.DefaultRouter()
@@ -26,6 +27,8 @@ urlpatterns = [
          trending_product_list, name="trending-product-list"),
     path('best-selling/<int:currency_id>/<str:lang>',
          best_selling_product_list, name="best-selling-product-list"),
+    path('new-arrival/<int:currency_id>/<str:lang>',
+         new_arrival_product_list, name="new-arrival-product-list"),
     path('search/<int:currency_id>/<str:lang>/',
          ApiProductList.as_view(), name="category-product-search"),
     path('<int:product_id>/<int:currency_id>/<str:lang>/',

@@ -127,6 +127,29 @@ def best_selling_product_list(request, currency_id, lang):
 
 
 @api_view(['GET', ])
+def new_arrival_product_list(request, currency_id, lang):
+    """
+    List the the products ordered from newest arrival to oldest in paginated view
+    """
+    if request.method == 'GET':
+        if not Currency.exists(currency_id):
+            return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        recent_products = Product.objects.raw('''
+            SELECT product.*
+            FROM Products_Product product
+            JOIN Orders_Purchase purchase ON product.id = purchase.product_id
+            WHERE product.balance > 0
+            ORDER BY purchase.id DESC; 
+            ''')
+        result_page = paginator.paginate_queryset(recent_products, request)
+        serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
+        return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(['GET', ])
 def product_details(request, product_id, currency_id, lang):
     """
     Shows a selected products details
