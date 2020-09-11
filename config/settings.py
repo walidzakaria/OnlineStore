@@ -154,7 +154,6 @@ DJOSER = {
     'SERIALIZERS': {
         'user_create': 'apps.authapp.serializers.UserCreateSerializer',
         'user': 'apps.authapp.serializers.UserCreateSerializer',
-        'current_user': 'apps.authapp.serializers.CurrentUserSerialier'
     }
 }
 

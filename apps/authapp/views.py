@@ -56,16 +56,3 @@ class PasswordReset(GenericAPIView):
         payload = {'uid': uid, 'token': token}
 
         return JsonResponse(payload)
-
-
-@api_view(['GET', ])
-@permission_classes([IsAuthenticated])
-def get_current_user(request):
-    """
-    List logged user information
-    """
-    if request.method == 'GET':
-        user = request.user
-        current_user = User.objects.filter(id=user.id).first()
-        serializer = CurrentUserSerializer(current_user, many=False)
-        return Response(serializer.data)
