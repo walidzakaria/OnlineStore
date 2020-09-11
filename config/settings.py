@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'drf_multiple_model',
     'djoser',
+    'corsheaders',
     'apps.authapp',
     'apps.utils',
     'apps.products',
