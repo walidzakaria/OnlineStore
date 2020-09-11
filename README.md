@@ -444,6 +444,23 @@ response:
 }
 ```
 
+#### GET /products/auto-suggestion/{word-pattern}/
+- General:
+    - Retrieves 10 suggestions containing the word pattern.
+    - word-pattern is included with <b></b> tags.
+ 
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/auto-suggestion/tes/ 
+```
+response:
+```json
+[
+    "<b>tes</b>t product",
+    "<b>tes</b>t"
+]
+```
+
 #### GET /products/{product_id}/{currency_id}/{lang}
 - General:
     - Retrieves a selected product details.
@@ -805,4 +822,31 @@ response:
     ]
 }
 ```
+
+#### GET /auth/current-user/
+- General:
+    - Requires authentication.
+    - Retrieved logged user information.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/auth/current-user/ 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+response:
+```json
+{
+    "id": 1,
+    "email": "walidpiano@yahoo.com",
+    "username": "admin",
+    "first_name": "Walid",
+    "last_name": "Hanna",
+    "phone": "01229277250"
+}
+```
+
 to be continued...
