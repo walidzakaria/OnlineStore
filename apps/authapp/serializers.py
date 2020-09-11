@@ -9,7 +9,7 @@ class UserCreateSerializer(UserCreateSerializer):
         fields = ('id', 'email', 'username', 'password', 'first_name', 'last_name', 'phone')
 
 
-class CurrentUserSerializer(UserSerializer):
-    class Meta(UserSerializer.Meta):
+class CurrentUserSerializer(serializers.ModelSerializer):
+    class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'phone')
+        fields = ('id', 'email', 'username', 'first_name', 'last_name', 'phone',)
