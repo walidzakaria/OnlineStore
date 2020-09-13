@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test Request</title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        
+    </head>
+    <body>
+        <h1>Test Request</h1>
+        <button id="go">Go</button>
+        <button id="signup">sign up</button>
+        <button id="test">Test</button>
+        <script>
+            $(document).ready(function() {
+
+            $('#test').on('click', function(){
+                test();
+            })
+<!--                function getCookie(name) {-->
+<!--                    let cookieValue = null;-->
+<!--                    if (document.cookie && document.cookie !== '') {-->
+<!--                        const cookies = document.cookie.split(';');-->
+<!--                        for (let i = 0; i < cookies.length; i++) {-->
+<!--                            const cookie = cookies[i].trim();-->
+<!--                            // Does this cookie string begin with the name we want?-->
+<!--                            if (cookie.substring(0, name.length + 1) === (name + '=')) {-->
+<!--                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));-->
+<!--                                break;-->
+<!--                            }-->
+<!--                        }-->
+<!--                    }-->
+<!--                    return cookieValue;-->
+<!--                }-->
+<!--                const csrftoken = getCookie('csrftoken');-->
+<!--                console.log(csrftoken);-->
+
+                $('#go').on('click', function(){
+
+
+                    $.ajax({
+                        url: "https://mystore9.herokuapp.com/auth/users/me/",
+                        type: 'GET',
+                        headers: {
+
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Token 8b0d5576a530cf1d6c2e8fb31e419c78ca3e8390'
+                            },
+                        success: function(res) {
+                            console.log(res);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+                });
+                
+                $('#signup').on('click', function(){
+
+
+                    $.ajax({
+
+                        url: "https://mystore9.herokuapp.com/auth/users/",
+                        type: 'POST',
+                        headers: {
+
+                                'Content-Type': 'application/json'
+                            },
+                        data: JSON.stringify({
+                            "username": "walidzakaria",
+                            "phone": "01229277250",
+                            "first_name": "walid",
+                            "last_name": "zakaria",
+                            "email": "walidpianooo@gmail.com",
+                            "password": "wwzzaahh",
+                            "re_password": "wwzzaahh"
+                        }),
+                        success: function(res) {
+                            console.log(res);
+                        },
+                        error: function(error) {
+                            console.log(error);
+                        }
+                    });
+
+
+                //     await fetch('https://mystore9.herokuapp.com/auth/users/',
+                //         {
+                //             method: 'POST',
+                //             mode: 'cors',
+                //             headers: {
+                //                 'Content-Type': 'application/json'
+                //             },
+                //             body: {
+                //                 "username": "waliddeveloper",
+                //                 "phone": "01229277250",
+                //                 "first_name": "walid",
+                //                 "last_name": "zakaria",
+                //                 "email": "walidpianooo@gmail.com",
+                //                 "password": "wwzzaahh",
+                //                 "re_password": "wwzzaahh"
+                //             }
+                //         }
+                //     ).then(function(result){
+                //         console.log(resut);
+                //     }).catch(function(error){
+                //         console.log(error);
+                //     })
+
+                // fetch("https://mystore9.herokuapp.com/auth/users/", {
+                //     method: 'POST',
+                //     headers: {
+                //         'content-type': 'application/json'
+                //     },
+                //     body: {
+                //         "username": "waliddeveloperr",
+                //         "phone": "01229277251",
+                //         "first_name": "walido",
+                //         "last_name": "zakariao",
+                //         "email": "walidpianoooo@gmail.com",
+                //         "password": "wwzzaahh",
+                //         "re_password": "wwzzaahh"
+                //     }
+                // })
+                // .then(function(response) {
+                //     if (!response.ok) {
+                //         throw Error(response.statusText);
+                //     }
+                //     return response;
+
+                // }).catch(function(error) {
+                //     console.log(error);
+                // });
+
+                 });
+
+    
+            });
+
+
+        function test(){
+            fetch("https://mystore9.herokuapp.com/auth/users/", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "username": "walidzakaria",
+                    "phone": "01229277250",
+                    "first_name": "walid",
+                    "last_name": "zakaria",
+                    "email": "walidpianooo@gmail.com",
+                    "password": "wwzzaahh",
+                    "re_password": "wwzzaahh"
+                })
+            }).then(response => {
+                return response.json();
+            }).then(data => {
+                console.log("Data is ok", data);
+            }).catch(ex => {
+                console.log("parsing failed", ex);
+            });
+
+
+        }
+
+        </script>
+
+    </body>
+</html>

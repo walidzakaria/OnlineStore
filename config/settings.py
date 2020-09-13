@@ -27,7 +27,7 @@ SECRET_KEY = '2fq*f8_j^7)wujhw3br@%4p0=p4duri&q*%j*@0m7mi2-_i-av'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-IS_HEROKU = True
+IS_HEROKU = False
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL = True
@@ -78,7 +78,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

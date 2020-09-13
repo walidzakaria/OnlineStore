@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -11,3 +12,7 @@ def index(request):
     date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     message = f'Server is live current time is {date}!'
     return Response(data=message, status=status.HTTP_200_OK)
+
+
+def show_requests(request):
+    return render(request, 'request.html')
