@@ -177,7 +177,7 @@ class ApiProductList(ListAPIView):
         lang = self.kwargs.get('lang')
         currency_id = self.kwargs.get('currency_id')
         self.serializer_class.context = {'lang': lang, 'curr': currency_id}
-        return Product.objects.all()
+        return Product.objects.filter(active=True).all()
 
     pagination_class = PageNumberPagination
     filter_backends = (SearchFilter, OrderingFilter)
