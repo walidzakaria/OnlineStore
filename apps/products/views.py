@@ -69,7 +69,8 @@ def subcategory_product_list(request, subcategory_id, currency_id, lang):
         if not Currency.exists(currency_id):
             return Response(data={"message": "currency doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        subcategory_products = Product.objects.filter(sub_category=subcategory_id).all()
+        subcategory_products = Product.objects.filter(
+            sub_category=subcategory_id, active=True).all()
         result_page = paginator.paginate_queryset(subcategory_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
         return paginator.get_paginated_response(serializer.data)
@@ -86,7 +87,8 @@ def category_product_list(request, category_id, currency_id, lang):
 
         paginator = PageNumberPagination()
         paginator.page_size = 10
-        category_products = Product.objects.filter(sub_category__category=category_id).all()
+        category_products = Product.objects.filter(
+            sub_category__category=category_id, active=True).all()
         result_page = paginator.paginate_queryset(category_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
         return paginator.get_paginated_response(serializer.data)
@@ -103,7 +105,7 @@ def trending_product_list(request, currency_id, lang):
 
         paginator = PageNumberPagination()
         paginator.page_size = 10
-        trending_products = Product.objects.filter(balance__gt=0).all().order_by('-sold')
+        trending_products = Product.objects.filter(balance__gt=0, active=True).all().order_by('-sold')
         result_page = paginator.paginate_queryset(trending_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
         return paginator.get_paginated_response(serializer.data)
@@ -120,7 +122,7 @@ def best_selling_product_list(request, currency_id, lang):
 
         paginator = PageNumberPagination()
         paginator.page_size = 10
-        best_selling_products = Product.objects.filter(balance__gt=0).all().order_by('-reduction')
+        best_selling_products = Product.objects.filter(balance__gt=0, active=True).all().order_by('-reduction')
         result_page = paginator.paginate_queryset(best_selling_products, request)
         serializer = ProductSerializer(result_page, many=True, context={'lang': lang, 'curr': currency_id})
         return paginator.get_paginated_response(serializer.data)
@@ -142,6 +144,7 @@ def new_arrival_product_list(request, currency_id, lang):
             FROM Products_Product product
             JOIN Orders_Purchase purchase ON product.id = purchase.product_id
             WHERE product.balance > 0
+            AND product.active = True
             ORDER BY purchase.id DESC; 
             ''')
         result_page = paginator.paginate_queryset(recent_products, request)
@@ -206,7 +209,7 @@ def get_suggested_items(search_pattern):
     search_pattern = search_pattern.lower()
     products = Product.objects.filter(
         Q(name__icontains=search_pattern) | Q(name_ar__icontains=search_pattern)
-    ).all()[:required_items]
+    ).filter(active=True).all()[:required_items]
 
     for i in products:
         if search_pattern in i.name.lower():
