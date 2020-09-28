@@ -848,5 +848,128 @@ response:
     "phone": "01229277250"
 }
 ```
+-------------------------
+
+#### GET /products/reviews/{product_id}/
+- General:
+    - Retrieves paginated reviews against selected product.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/reviews/2/ 
+```
+
+response:
+```json
+{
+    "count": 2,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 23,
+            "created_by": {
+                "username": "admin",
+                "phone": "01229277250",
+                "first_name": "Walid",
+                "last_name": "Hanna",
+                "id": 1,
+                "email": "walidpiano@yahoo.com"
+            },
+            ...
+        }
+    ]
+}
+```
+
+#### POST products/reviews_create/
+- General:
+    - Requires authentication.
+    - Creates a new user review against a certain product.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/reviews_create/ 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+body:
+```json
+{
+    "product": 2,
+    "rating": 3,
+    "comment": "not as expected!!"
+}
+```
+response:
+```json
+{
+    "id": 26,
+    "created_at": "2020-09-28T12:01:12.982892Z",
+    "updated_at": "2020-09-28T12:01:12.982892Z",
+    "rating": 3,
+    "comment": "not as expected!!",
+    "created_by": 27,
+    "updated_by": 27,
+    "product": 2
+}
+```
+
+#### PUT /products/reviews_update/{review_id}
+- General:
+    - Requires authentication.
+    - Updates a review that belongs to the same user.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/reviews_update/26 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+body:
+```json
+{
+    "rating": 3,
+    "comment": "i made this comment incorrectly"
+}
+```
+response:
+```json
+{
+    "rating": 3,
+    "comment": "i made this comment incorrectly",
+    "created_by": 27,
+    "updated_by": 27,
+    "product": 2
+}
+```
+
+#### DELETE /products/reviews_update/{review_id}
+- General:
+    - Requires authentication.
+    - Deletes a review that belongs to the user.
+- Sample:
+```commandline
+https://mystore9.herokuapp.com/products/reviews_update/26 
+```
+header:
+```json
+{
+  "Authorization": "Token ?????????????????????"
+}
+```
+
+response:
+```json
+{
+    "message": "deleted"
+}
+```
+
 
 to be continued...

@@ -6,7 +6,8 @@ from .views import (
     category_list, sub_category_list, slider_list,
     subcategory_product_list, category_product_list, trending_product_list,
     best_selling_product_list, ApiProductList, product_details, auto_suggestion,
-    new_arrival_product_list
+    new_arrival_product_list, product_reviews_details, product_reviews_post,
+    product_reviews_update
 )
 
 # router = routers.DefaultRouter()
@@ -35,5 +36,11 @@ urlpatterns = [
          product_details, name="product-details"),
     path('auto-suggestion/<str:search_pattern>/',
          auto_suggestion, name="auto-suggestion-list"),
+    path('reviews/<int:product_id>/',
+         product_reviews_details, name="product-reviews-detail"),
+    path('reviews_create/',
+         product_reviews_post, name="product-reviews-create"),
+    path('reviews_update/<int:review_id>',
+         product_reviews_update, name="product-reviews-update"),
 
 ]

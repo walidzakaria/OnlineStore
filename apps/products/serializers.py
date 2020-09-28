@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from apps.currencies.models import Currency
-from apps.products.models import Category, SubCategory, Product, Slider
+from apps.products.models import Category, SubCategory, Product, Slider, Review
+from apps.authapp.serializers import UserSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -63,4 +64,20 @@ class SliderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Slider
         fields = ('name', 'image', 'link', )
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+
+    created_by = UserSerializer(read_only=True, many=False)
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class ReviewSerializerAdd(serializers.ModelSerializer):
+
+    class Meta:
+        model = Review
+        fields = '__all__'
 

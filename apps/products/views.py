@@ -1,5 +1,5 @@
 # encoding=utf-8
-
+from django.utils import timezone
 from requests import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action, api_view
@@ -12,8 +12,10 @@ from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 
-from .serializers import CategorySerializer, SubCategorySerializer, ProductSerializer, SliderSerializer
-from .models import Brand, Category, SubCategory, Product, Slider
+from .serializers import (
+    CategorySerializer, SubCategorySerializer, ProductSerializer,
+    SliderSerializer, ReviewSerializer, ReviewSerializerAdd)
+from .models import Brand, Category, SubCategory, Product, Slider, Review
 from ..currencies.models import Currency
 
 
@@ -139,6 +141,9 @@ def new_arrival_product_list(request, currency_id, lang):
 
         paginator = PageNumberPagination()
         paginator.page_size = 10
+
+        # @TODO: fix duplicate products
+
         recent_products = Product.objects.raw('''
             SELECT product.*
             FROM Products_Product product
@@ -193,7 +198,7 @@ def auto_suggestion(request, search_pattern):
     Provides auto suggestion list based on the input search pattern
     """
     if request.method == 'GET':
-        search_pattern = u'%s' %search_pattern
+        search_pattern = u'%s' % search_pattern
         result = get_suggested_items(search_pattern)
         result = set_bold_suggestion(result, search_pattern)
 
@@ -262,3 +267,74 @@ def set_bold_suggestion(input_list, search_pattern):
         element_name = element_name.replace(search_pattern, f'<b>{search_pattern}</b>')
         input_list[i] = element_name
     return input_list
+
+
+@api_view(['GET', ])
+def product_reviews_details(request, product_id):
+    """
+    List all reviews against a certain product
+    """
+    if request.method == 'GET':
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        reviews = Review.objects.filter(product=product_id).all()
+
+        result_page = paginator.paginate_queryset(reviews, request)
+        serializer = ReviewSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+
+@api_view(['POST', ])
+@permission_classes([IsAuthenticated])
+def product_reviews_post(request):
+    """
+    Create a new product review
+    """
+
+    if request.method == 'POST':
+        request.data['created_by'] = request.user.id
+        request.data['updated_by'] = request.user.id
+        request.data['created_at'] = timezone.now()
+        request.data['updated_at'] = timezone.now()
+
+        serializer = ReviewSerializerAdd(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT', 'DELETE', ])
+@permission_classes([IsAuthenticated])
+def product_reviews_update(request, review_id):
+    """
+    Update a certain product review
+    """
+    review = Review.objects.filter(id=review_id).first()
+
+    if not review:
+        return Response(data={"message": "review doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+
+    if review.created_by != request.user:
+        return Response(data={"message": "invalid user to update this review"},
+                        status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'PUT':
+        request.data['id'] = review_id
+        request.data['created_at'] = review.created_at
+        request.data['created_by'] = review.created_by.id
+        request.data['updated_by'] = review.updated_by.id
+        request.data['updated_at'] = timezone.now()
+        request.data['product'] = review.product.id
+
+        serializer = ReviewSerializerAdd(data=request.data)
+
+        if serializer.is_valid():
+            serializer.update(review, serializer.validated_data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'DELETE':
+        review.delete()
+        return Response(data={"message": "deleted"}, status=status.HTTP_204_NO_CONTENT)

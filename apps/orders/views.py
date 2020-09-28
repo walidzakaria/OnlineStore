@@ -96,10 +96,11 @@ def user_address_detail(request, user_address_id):
     if request.method == 'PUT':
         user = request.user
         request.data['user'] = user.id
+
         serializer = UserAddressSerializer(user_address, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            serializer.update(user_address, serializer.validated_data)
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':

@@ -121,7 +121,7 @@ class Review(AbstractTableMeta, models.Model):
     __original_product = None
 
     def __init__(self, *args, **kwargs):
-        super(Review, self).__init__(*args, *kwargs)
+        super(Review, self).__init__(*args, **kwargs)
         try:
             self.__original_product = self.product
         except:
@@ -136,8 +136,13 @@ class Review(AbstractTableMeta, models.Model):
             self.product.save()
         self.__original_product = self.product
 
+    def delete(self, using=None, keep_parents=False):
+        product = self.product
+        super(Review, self).delete(using=None, keep_parents=False)
+        product.save()
+
     def __str__(self):
-        return f'{self.id}: {self.product}, {self.rating}'
+        return f'{self.product}, {self.rating}'
 
     class Meta:
         ordering = ['-id']
